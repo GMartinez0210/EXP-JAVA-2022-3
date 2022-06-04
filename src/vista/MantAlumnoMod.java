@@ -26,6 +26,8 @@ import java.awt.event.KeyAdapter;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 
+// OE RCTGA
+
 
 public class MantAlumnoMod extends JInternalFrame{
 	
