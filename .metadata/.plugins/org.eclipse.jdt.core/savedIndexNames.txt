@@ -1,0 +1,3 @@
+INDEX VERSION 1.131+C:\Users\alepa\OneDrive - CIBERTEC\Documents\Estudios\For Cibertec\Ciclo 2\Algortimos y Estructura de Datos\Proyecto\Sistema de Alumnos\.metadata\.plugins\org.eclipse.jdt.core
+3356198148.index
+1067094681.index
