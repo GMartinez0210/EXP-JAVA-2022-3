@@ -1,6 +1,5 @@
 package vista;
 
-import java.util.ArrayList;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
@@ -19,6 +18,10 @@ import java.awt.Toolkit;
 
 public class Menu extends JFrame  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel desk;
 	private JMenuBar menuBar;
 	private JMenu mnMantenimiento;
