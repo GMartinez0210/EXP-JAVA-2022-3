@@ -8,23 +8,28 @@ import javax.swing.JOptionPane;
 
 import java.awt.Font;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.JTextField;
-import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
 
 import arrays.ArrayAlumno;
 import entidad.Alumno;
+import mantenimiento.GestionAlumnoDAO;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.ImageIcon;
 
 public class MantAlumnoAdicionar extends JInternalFrame {
+	
+	GestionAlumnoDAO gAlum = new GestionAlumnoDAO();
+	DefaultTableModel modelo = new DefaultTableModel();
+	
 	private JLabel lblNewLabel;
 	private JLabel lblNewLabel_1;
 	private JLabel lblNewLabel_2;
@@ -38,10 +43,7 @@ public class MantAlumnoAdicionar extends JInternalFrame {
 	private JTextField text_DNI;
 	private JTextField text_Edad;
 	private JTextField text_Celular;
-	private JTable table;
 	private JButton btn_Adicionar;
-	private JScrollPane scrollPane;
-	private DefaultTableModel modelo;
 	private JLabel lblNewLabel_8;
 	private JTextField text_Estado;
 	
@@ -49,15 +51,14 @@ public class MantAlumnoAdicionar extends JInternalFrame {
 	/*	None	*/
 	
 	//	Arreglo terráqueo
-	ArrayAlumno AA = new ArrayAlumno();
 	private JLabel lblNewLabel_9;
 	private JLabel lblNewLabel_10;
+	private JTable table;
+	private JScrollPane scrollPane;
 	
 	
 	//	Clase terráquea
 	/*	Waiting	*/
-	
-	
 	
 	
 	/**
@@ -132,13 +133,11 @@ public class MantAlumnoAdicionar extends JInternalFrame {
 		{
 			text_Codigo = new JTextField();
 			text_Codigo.setEditable(false);
+			text_Codigo.setText(gAlum.leerCodigoAlumno());
 			text_Codigo.setBounds(123, 108, 140, 19);
 			getContentPane().add(text_Codigo);
 			text_Codigo.setColumns(10);
-			
-			//	Agregamos el codigo correlativo por default
-			text_Codigo.setText(AA.codigoCorrelativo());
-		}
+		}		
 		{
 			text_Nombre = new JTextField();
 			text_Nombre.addKeyListener(new KeyAdapter() {
@@ -200,16 +199,6 @@ public class MantAlumnoAdicionar extends JInternalFrame {
 			getContentPane().add(text_Celular);
 		}
 		{
-			scrollPane = new JScrollPane();
-			scrollPane.setBounds(42, 308, 524, 213);
-			getContentPane().add(scrollPane);
-			{
-				table = new JTable();
-				table.setFillsViewportHeight(true);
-				scrollPane.setViewportView(table);
-			}
-		}
-		{
 			btn_Adicionar = new JButton("Adicionar");
 			btn_Adicionar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -228,7 +217,7 @@ public class MantAlumnoAdicionar extends JInternalFrame {
 		{
 			text_Estado = new JTextField();
 			text_Estado.setEditable(false);
-			text_Estado.setText(AA.FijamosEstado() + "");
+			text_Estado.setText("0");
 			text_Estado.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyTyped(KeyEvent e) {
@@ -239,17 +228,6 @@ public class MantAlumnoAdicionar extends JInternalFrame {
 			text_Estado.setBounds(426, 216, 140, 19);
 			getContentPane().add(text_Estado);
 		}
-		
-			// Hacemos el Default de la Tabla
-		modelo = new DefaultTableModel();
-		modelo.addColumn("Codigo");
-		modelo.addColumn("Nombre");
-		modelo.addColumn("Apellido");
-		modelo.addColumn("DNI");
-		modelo.addColumn("Edad");
-		modelo.addColumn("Celular");
-		modelo.addColumn("Estado");
-		table.setModel(modelo);
 		{
 			lblNewLabel_9 = new JLabel("");
 			lblNewLabel_9.setIcon(new ImageIcon(MantAlumnoAdicionar.class.getResource("/imagenes/132womanstudent2_100407.png")));
@@ -262,7 +240,63 @@ public class MantAlumnoAdicionar extends JInternalFrame {
 			lblNewLabel_10.setBounds(465, 22, 48, 82);
 			getContentPane().add(lblNewLabel_10);
 		}
-		MostramosTabla();
+		{
+			scrollPane = new JScrollPane();
+			scrollPane.setBounds(10, 300, 600, 251);
+			getContentPane().add(scrollPane);
+			
+			table = new JTable();
+			table.setFillsViewportHeight(true);
+			scrollPane.setViewportView(table);
+		}
+		modelo.addColumn("Código Alumno");
+		modelo.addColumn("Nombre");
+		modelo.addColumn("Apellido");
+		modelo.addColumn("DNI");
+		modelo.addColumn("Edad");
+		modelo.addColumn("Celular");
+		modelo.addColumn("Estado");
+		table.setModel(modelo);
+		
+		cargarDataUsuarios();
+	}
+	
+	void registrarSac(){
+		String codAlumno, nombres, apellidos, dni;
+		int edad, celular, estado;
+		
+		codAlumno = gAlum.leerCodigoAlumno();
+		nombres = LeerString(text_Nombre);
+		apellidos = LeerString(text_Apellido);
+		dni = LeerString(text_DNI);
+		edad = LeerEntero(text_Edad);
+		celular = LeerEntero(text_Celular);
+		estado = 0;
+		
+		if(codAlumno == null || nombres == null || apellidos == null || dni == null || edad == 0 || celular == 0 || estado == -1) {
+			return;
+		} else {
+			Alumno a = new Alumno();
+			a.setCodAlumno(codAlumno);
+			a.setNombres(nombres);
+			a.setApellidos(apellidos);
+			a.setDni(dni);
+			a.setEdad(edad);
+			a.setCelular(celular);
+			a.setEstado(estado);
+			
+			int res = gAlum.registrar(a);
+			
+			if(res == 0) {
+				mensajeError("Error en el registro de la SAC");
+				text_Nombre.requestFocus();
+			} 
+			else {
+				Limpiar();
+				cargarDataUsuarios();
+				mensajeExitoso("Registro exitoso");
+			}
+		}
 	}
 	
 	//	Metodo Solo Numeros
@@ -274,7 +308,7 @@ public class MantAlumnoAdicionar extends JInternalFrame {
 		}
 	}
 	
-		//	Metodo Solo Letras
+	//	Metodo Solo Letras
 	void SoloLetras (KeyEvent e) {
 		char caracter = e.getKeyChar();
 		if (!(Character.isLetter(caracter) || caracter == e.VK_SPACE)) {
@@ -282,7 +316,9 @@ public class MantAlumnoAdicionar extends JInternalFrame {
 			e.consume();
 		}
 	}
-		//	No caracteres especiales
+		
+	
+	//	No caracteres especiales
 	void NoEspeciales (KeyEvent e) {
 		char caracter = e.getKeyChar();
 		if (!(Character.isLetter(caracter) || Character.isDigit(caracter))) {
@@ -291,7 +327,8 @@ public class MantAlumnoAdicionar extends JInternalFrame {
 		}
 	}
 	
-		//	Metodo para no exceder los digitos
+	
+	//	Metodo para no exceder los digitos
 	void BorrandoDigitos (KeyEvent e,int field) {
 		switch (field) {
 			case 3: 
@@ -313,41 +350,41 @@ public class MantAlumnoAdicionar extends JInternalFrame {
 		}
 	}
 	
-		//	Validando Nombre
+	//	Validando Nombre
 	protected void keyTypedText_Nombre(KeyEvent e) {
 		SoloLetras(e);
 	}
 	
-		// Validando DNI
+	// Validando DNI
 	protected void keyTypedText_DNI(KeyEvent e) {
 		SoloNumeros(e);
 		BorrandoDigitos(e, 3);
 	}
 	
-		//	Validando Celular
+	//	Validando Celular
 	protected void keyTypedText_Celular(KeyEvent e) {
 		SoloNumeros(e);
 		BorrandoDigitos(e, 4);
 	}
 	
-		//	Validando Apellido
+	//	Validando Apellido
 	protected void keyTypedText_Apellido(KeyEvent e) {
 		SoloLetras(e);
 	}
 	
-		//	Validando Edad
+	//	Validando Edad
 	protected void keyTypedText_Edad(KeyEvent e) {
 		SoloNumeros(e);
 		BorrandoDigitos(e, 7);
 	}
 
-		//	Validando Estado
+	//	Validando Estado
 	protected void keyTypedText_Estado(KeyEvent e) {
 		SoloNumeros(e);
 		BorrandoDigitos(e, 8);
 	}
 	
-		//	Metodos Leer
+	//	Metodos Leer
 	String LeerString(JTextField text) {
 		return text.getText().trim();
 	}
@@ -356,27 +393,9 @@ public class MantAlumnoAdicionar extends JInternalFrame {
 		return Integer.parseInt(text.getText().trim());
 	}
 	
-		// Metodo Error
-	void Error(String x, JTextField text) {
-		JOptionPane.showMessageDialog(this, "No rellenaste el campo: " + x, "ERROR", 0);
-		text.setText("");
-		text.requestFocus();
-	}
-	
-		//	Metodo Si Existe
-	void SiExiste(String x, JTextField text) {
-		JOptionPane.showMessageDialog(this, "Ya existe un alumno con el DNI: " + x, "ERROR", 0);
-		text.requestFocus();
-	}
-	
-		//	Metodo Fijamos Estado
-	int FijamosEstado() {
-		return 0;
-	}
-	
-		// Metodo Limpiar
+	// Metodo Limpiar
 	void Limpiar() {
-		text_Codigo.setText(AA.codigoCorrelativo());
+		text_Codigo.setText(gAlum.leerCodigoAlumno());
 		text_Nombre.setText("");
 		text_Apellido.setText("");
 		text_DNI.setText("");
@@ -384,97 +403,27 @@ public class MantAlumnoAdicionar extends JInternalFrame {
 		text_Celular.setText("");
 	}
 	
-	
-		// Metodo Mostramos el Alumno en la Tabla
-	void MostramosTabla() {
+	// Metodo Mostramos el Alumno en la Tabla
+	public void cargarDataUsuarios() {
 		modelo.setRowCount(0);
-		for (int i  = 0; i < AA.tamanio(); i++) {
-			Object [] fila = {
-					AA.obtener(i).getCodAlumno(),
-					AA.obtener(i).getNombres(),
-					AA.obtener(i).getApellidos(),
-					AA.obtener(i).getDni(),
-					AA.obtener(i).getEdad(),
-					AA.obtener(i).getCelular(),
-					AA.obtener(i).getEstado(),
-			};
+		ArrayList<Alumno> data = gAlum.listar();
+		for (Alumno a : data) {
+			Object fila[] = {a.getCodAlumno(), a.getNombres(), 
+					a.getApellidos(), a.getDni(), a.getEdad(), a.getCelular(), a.getEstado()};
 			modelo.addRow(fila);
 		}
 	}
 	
-		//	Metodo Adicionar Alumno
-	void AdicionamosAlumno (String Nombre, String Apellido, String DNI, int Edad, int Celular, int Estado) {
-		Alumno nuevo = new Alumno(AA.codigoCorrelativo(), Nombre, Apellido, DNI, Edad, Celular, Estado);
-		AA.adicionar(nuevo);
-		MostramosTabla();
-		Limpiar();
-	}
-	
-		//	Metodo Leer Datos Completos
-	void LeerDatosCompletos() {
-		String Nombre = LeerString(text_Nombre);
-		if (Nombre.length() != 0) {
-			String Apellido = LeerString(text_Apellido);
-			if (Apellido.length() != 0) {
-				String DNI = LeerString(text_DNI);
-				if (DNI.length() != 0) {
-					if (AA.buscarDNI(DNI) == null) {
-						try {
-							int Edad = LeerEntero(text_Edad);
-							if (Edad != 0) {
-								try {
-									int Celular = LeerEntero(text_Celular);
-									if (Celular > 900000000) {
-										try {
-											//int Estado = LeerEntero(text_Estado);
-											int Estado = FijamosEstado();
-											try {
-												AdicionamosAlumno(Nombre, Apellido, DNI, Edad, Celular, Estado);
-											}
-											catch (Exception e1) {}
-										}
-										catch (Exception e1) {
-											Error("ESTADO", text_Estado);
-										}
-									}
-									else {
-										JOptionPane.showMessageDialog(this, "El CELULAR no es correcto");
-										text_Celular.requestFocus();
-									}
-								}
-								catch (Exception e1) {
-									Error("CELULAR", text_Celular);
-								}
-							}
-						}
-						catch (Exception e1) {
-							Error("EDAD", text_Edad);
-						}
-					}
-					else {
-						SiExiste(DNI, text_DNI);
-					}
-				}
-				else {
-					Error("DNI", text_DNI);
-				}
-			}
-			else {
-				Error("Apellido", text_Apellido);
-			}
-		}
-		else {
-			Error("NOMBRE", text_Nombre);
-		}
-	}
-		
-		//	Metodo Procesar Adicionar
-	void ProcesarAdicionar() {
-		LeerDatosCompletos();
-	}
-	
-		//	Btn Adicionar
+	//	Btn Adicionar
 	protected void actionPerformedBtn_Adicionar(ActionEvent e) {
-		ProcesarAdicionar();
+		registrarSac();
+	}
+	
+	private void mensajeExitoso(String msj) {
+		 JOptionPane.showMessageDialog(this, msj, "Correcto", 1);
+	}
+	
+	private void mensajeError(String msj) {
+		  JOptionPane.showMessageDialog(this, msj, "Error", 0);		
 	}
 }
