@@ -59,18 +59,18 @@ public class GestionCursoDAO implements CursoDAO {
 			con = MySQLConexion8.getConexion();
 			
 			// Paso 2: Registrar 
-			String sql = "update curso set codCurso = ?, asignaturaCurso = ?, cicloCurso = ?, creditoCurso = ?, horasCurso = ? where idCurso = ?;";
+			String sql = "update curso set asignaturaCurso = ?, cicloCurso = ?, creditoCurso = ?, horasCurso = ? where codCurso = ?;";
 			
 			// Paso 3: Creacion del objeto pstm y enviar la variable sql
 			pstm = con.prepareStatement(sql);
 			
 			// Paso 4: parametros
 			
-			pstm.setString(1, curso.getCodCurso());
-			pstm.setString(2, curso.getAsignatura());
-			pstm.setInt(3, curso.getCiclo());
-			pstm.setInt(4, curso.getCreditos());
-			pstm.setInt(5, curso.getHoras());
+			pstm.setString(1, curso.getAsignatura());
+			pstm.setInt(2, curso.getCiclo());
+			pstm.setInt(3, curso.getCreditos());
+			pstm.setInt(4, curso.getHoras());
+			pstm.setString(5, curso.getCodCurso());
 			
 			// Paso 5: ejecutar la instruccion
 			res = pstm.executeUpdate();
@@ -197,7 +197,7 @@ public class GestionCursoDAO implements CursoDAO {
 			con = MySQLConexion8.getConexion();
 			
 			// Paso 2: Registrar
-			String sql = "delete from curso where codCurso = ?;";
+			String sql = "delete from james_school.curso where codCurso = ?;";
 			
 			// Paso 3: Creacion del objeto pstm y enviar la variable sql
 			pstm = con.prepareStatement(sql);
@@ -222,5 +222,38 @@ public class GestionCursoDAO implements CursoDAO {
 		
 		return res;
 	}
+	public Curso listarCurso(String codCurso){
+        ArrayList<Curso> listarCurso = new ArrayList<Curso>();
+        Curso curso = null;
+        Connection con = null;
+        PreparedStatement pstm = null;
+        ResultSet res = null;
+        try {
+            con = MySQLConexion8.getConexion();
+            String sql = "SELECT * from curso where codCurso = ?;";
+            pstm = con.prepareStatement(sql);
+            pstm.setString(1, codCurso);
+            res = pstm.executeQuery();
+            while(res.next()) {
+                curso = new Curso();
+                curso.setCodCurso(res.getString(2));
+                curso.setAsignaturas(res.getString(3));
+                curso.setCiclo(res.getInt(4));
+                curso.setCreditos(res.getInt(5));
+                curso.setHoras(res.getInt(6));
+             }
+        } catch (Exception e) {
+            System.out.println(">>>>>>>>>>>> Error en la Instrucción SQL - Consultar" + e.getMessage());
+        }finally {
+            try {
+                if(pstm != null ) pstm.close();
+                if(res != null) res.close();
+                if(con != null) con.close();
 
+            } catch (SQLException e2) {
+                System.out.println("<<<< Error al cerrar la base de datos "+ e2.getMessage());
+            }
+        }
+        return curso;
+    }
 }

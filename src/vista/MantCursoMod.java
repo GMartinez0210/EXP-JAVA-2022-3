@@ -205,11 +205,10 @@ public class MantCursoMod extends JInternalFrame {
 			getContentPane().add(rdbtn_Consultar);
 		}
 		{
-			rdbtn_Modificar = new JRadioButton("Modificar");
+			rdbtn_Modificar = new JRadioButton("Modificar ");
 			rdbtn_Modificar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					actionPerformedRdbtn_Modificar(e);
-					actualizarDatos();
 				}
 			});
 			rdbtn_Modificar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -220,8 +219,8 @@ public class MantCursoMod extends JInternalFrame {
 			btn_Eliminar = new JButton("Eliminar");
 			btn_Eliminar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					actionPerformedBtn_Eliminar(e);
-					eliminarDatos();
+				eliminarDatos();
+				leerDatos();
 				}
 			});
 			btn_Eliminar.setFont(new Font("Tahoma", Font.PLAIN, 13));
@@ -232,13 +231,14 @@ public class MantCursoMod extends JInternalFrame {
 			btn_Procesar = new JButton("Consultar");
 			btn_Procesar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					actionPerformedBtn_Procesar(e);
+					btn_ProcesarActionPerformed(e);
 				}
 			});
 			btn_Procesar.setFont(new Font("Tahoma", Font.PLAIN, 13));
 			btn_Procesar.setBounds(452, 104, 90, 21);
 			getContentPane().add(btn_Procesar);
 		}
+		
 		
 		grupo.add(rdbtn_Consultar);
 		grupo.add(rdbtn_Modificar);
@@ -252,12 +252,37 @@ public class MantCursoMod extends JInternalFrame {
 		table.setModel(modelo);
 		leerDatos();
 	}
-	
+	void consultar() {
+		String codCurso;
+		codCurso = LeerString(text_Codigo);
+        modelo.setRowCount(0);
+        if(codCurso == null) {
+            return;
+        }else {
+            	Curso curso = gCurso.listarCurso(codCurso);
+            	text_Codigo.setText(curso.getCodCurso());
+            	text_Horas.setText(""+ curso.getHoras());
+            	CBO_Ciclo.setSelectedIndex(curso.getCiclo());
+            	text_Asignatura.setText(curso.getAsignatura());
+            	text_Creditos.setText(""+ curso.getCreditos());
+            	
+//            	modelo.setRowCount(0);
+//            	Object[] row = {
+//    					curso.getCodCurso(),
+//    					curso.getAsignatura(),
+//    					curso.getCiclo(),
+//    					curso.getCreditos(),
+//    					curso.getHoras(),
+//    			};
+//    			modelo.addRow(row);  	
+        }
+		
+	}
 	void actualizarDatos() {
 		String codCurso, asignatura;
 		int ciclo,creditos, horas ;
 		// entradas
-		codCurso = gCurso.leerCodigo();
+		codCurso = getCodigo();
 		asignatura = getAsignatura();
 		ciclo = getCiclo();
 		creditos = getCreditos();
@@ -289,11 +314,11 @@ public class MantCursoMod extends JInternalFrame {
 	}
 	
 	void eliminarDatos() {
-		String codigoCurso = null;
-		codigoCurso = gCurso.leerCodigo();
+		String codCurso;
+		codCurso = getCodigo();
 		
-		if (codigoCurso == null) {
-        	return;
+		if (codCurso == null) {
+			mensajeError("Error ");
         } 
 		else {
 			// confirmación
@@ -303,7 +328,7 @@ public class MantCursoMod extends JInternalFrame {
         		// procesos
             	Curso c = new Curso();
             	
-            	c.setCodCurso(codigoCurso);        	
+            	c.setCodCurso(codCurso);        	
             	
             	// Llamar al metodo a registar
             	int ok = gCurso.eliminar(c);
@@ -321,6 +346,23 @@ public class MantCursoMod extends JInternalFrame {
         	
         }
 	}
+
+		String getCodigo() {
+	    	String cod = null;
+	    	if (text_Codigo.getText().trim().length() == 0) {
+	    		mensajeError("Ingrese el codigo");
+	    	}
+	    	else {
+	    		try {
+	    			cod = text_Codigo.getText();
+	    		}
+	    		catch (Exception e) {
+	    			mensajeError("Ingrese un código numérico");
+	    		}
+	    	}
+	    	return cod;
+	    
+		}
 	
 	private String getAsignatura() {
 		String asignatura = null;
@@ -433,6 +475,7 @@ public class MantCursoMod extends JInternalFrame {
 						break;
 		}
 	}
+
 	
 		// Validando Codigo
 	protected void keyTypedText_Codigo(KeyEvent e) {
@@ -500,7 +543,7 @@ public class MantCursoMod extends JInternalFrame {
 		//	Rdbtn Modificar
 	protected void actionPerformedRdbtn_Modificar(ActionEvent e) {
 		btn_Procesar.setText("Modificar");
-		TextNoEditable(text_Codigo);
+		TextEditable(text_Codigo);
 		TextEditable(text_Asignatura);
 		CBO_Ciclo.setEnabled(true);
 		TextEditable(text_Creditos);
@@ -515,85 +558,7 @@ public class MantCursoMod extends JInternalFrame {
 		text_Creditos.setText("");
 		text_Horas.setText("");
 	}
-	
 
-
-	
-/*		//	Metodo Modificamos
-	void Modificamos (String Asignatura, int Ciclo, int Creditos, int Horas) {
-		String Codigo = LeerString(text_Codigo);
-		try {
-			Curso curso = AC.buscar(Codigo);
-				if (curso != null) {
-					curso.setAsignaturas(Asignatura);
-					curso.setCiclo(Ciclo);
-					curso.setCreditos(Creditos);
-					curso.setHoras(Horas);
-					AC.actualizarArchivo();
-				}
-				else {
-					NoExiste("CODIGO");
-				}
-		}
-		catch (Exception e1) {
-			Error("CODIGO", text_Codigo);
-		}
-		MostramosTabla();
-		leerDatos();
-		Limpiar();
-	}
-	// Metodo Adicionar 
-	void LeerModificar() {
-		String Asignatura = LeerString(text_Asignatura);
-		if(Asignatura.length() != 0) {
-			try {
-				int Ciclo = Integer.parseInt(CBO_Ciclo.getSelectedItem().toString());
-				if(Ciclo != 0) {
-					try {
-						int Creditos = LeerEntero(text_Creditos);
-						if(Creditos > 0) {
-							int Horas = LeerEntero(text_Horas);
-							if (Horas > 0 && Horas <= 6) {
-								Modificamos(Asignatura, Ciclo, Creditos, Horas);
-							}
-							else {
-								JOptionPane.showMessageDialog(this, "Las HORAS exceden el limite");
-							}
-						}
-					}
-					catch (Exception e1) {
-						Error("CREDITOS", text_Creditos);
-					}
-				}
-			}
-			catch (Exception e1) {
-				Error("CICLO", null);
-				CBO_Ciclo.requestFocus();
-			}
-		}
-		else {
-			Error("ASIGNATURA", text_Asignatura);
-		}
-	}*/
-	
-	
-		//	Btn Procesar
-	protected void actionPerformedBtn_Procesar(ActionEvent e) {
-			//	Rdbtn Consultar
-		if (rdbtn_Consultar.isSelected()) {
-		}
-		else {
-			actualizarDatos();
-		}
-	}
-	
-	boolean MatriculadosEnCurso(String Codigo) {
-		for (int i = 0; i < AM.tamanio(); i++) {
-			if (AM.obtener(i).getCodCurso().equals(Codigo))
-				return true;
-		}
-		return false;
-	}
 	private void mensajeExitoso(String msj) {
 		 JOptionPane.showMessageDialog(this, msj, "Registro bien", 1);
 		
@@ -603,30 +568,14 @@ public class MantCursoMod extends JInternalFrame {
 		// TODO Auto-generated method stub
 		
 	}
-		// btn Eliminar
-	protected void actionPerformedBtn_Eliminar(ActionEvent e) {
-		String Asignatura = LeerString(text_Asignatura);
-		String Codigo = LeerString(text_Codigo);
-		if (!MatriculadosEnCurso(Codigo)) {
-			int Answer = JOptionPane.showConfirmDialog(this, "¿Desea eliminar el curso: " + Asignatura + "?", "CONFIRMACION", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-			if (Answer == JOptionPane.YES_OPTION) {
-				try {
-					Curso curso = AC.buscar(Codigo);
-					if (curso != null) {
-						eliminarDatos();
-						Limpiar();
-					}
-				}
-				catch (Exception e1) {
-					NoExiste("CODIGO");
-				}
-			}
-			else {
-				JOptionPane.showMessageDialog(this, "Buena eleccion, soldado", "Comentario", 1);
-			}
+	
+//btn consultar
+	protected void btn_ProcesarActionPerformed(ActionEvent e) {
+		if(rdbtn_Modificar.isSelected()) {
+					actualizarDatos();
+		} else {
+			consultar();
 		}
-		else {
-			JOptionPane.showMessageDialog(this, "No puede eliminar el curso: " + Asignatura + " porque hay alumnos matriculados en el", "ERROR", 0);
-		}
+		leerDatos();
 	}
 }
