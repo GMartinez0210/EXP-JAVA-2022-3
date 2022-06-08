@@ -430,17 +430,17 @@ public class MantCursoAdicionar extends JInternalFrame {
 		
 	}
 	
+	
 		// Btn Adicionar
 	protected void actionPerformedBtn_Adicionar(ActionEvent e) {
 		ProcesarAdicionar();
+		leerDatos();
 	}
 	private void mensajeExitoso(String msj) {
 		 JOptionPane.showMessageDialog(this, msj, "Registro bien", 1);
 		
 	}
 	private void mensajeError(String msj) {
-		  JOptionPane.showMessageDialog(this, msj, "Error", 0);
-		// TODO Auto-generated method stub
-		
+		  JOptionPane.showMessageDialog(this, msj, "Error", 0);		
 	}
 }

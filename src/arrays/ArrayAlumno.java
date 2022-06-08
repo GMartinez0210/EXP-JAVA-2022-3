@@ -19,13 +19,16 @@ public class ArrayAlumno {
 	public int tamanio () {
 		return arrAlumno.size();
 	}
+	
 	public void adicionar(Alumno x) {
 		arrAlumno.add(x);
 		grabarAlumnos();
 	}
+	
 	public Alumno obtener (int i) {
 		return arrAlumno.get(i);
 	}
+	
 	public Alumno buscarCod(String codigo) {
 		for (int i = 0; i < tamanio(); i++) {
 			if (obtener(i).getCodAlumno().equals(codigo))
@@ -33,6 +36,7 @@ public class ArrayAlumno {
 		}
 		return null;
 	}
+	
 	public Alumno buscarDNI(String DNI) {
 		for (int i=0; i<tamanio(); i++) {
 			String alumnoDni = obtener(i).getDni();
@@ -41,13 +45,16 @@ public class ArrayAlumno {
 		}
 		return null;
 	}
+	
 	public void eliminar(Alumno x) {
 		arrAlumno.remove(x);
 		grabarAlumnos();
 	}
+	
 	public void actulizarArchivos() {
 		grabarAlumnos();
 	}
+	
 	private void grabarAlumnos() {
 		try {
 			PrintWriter pw;
@@ -95,6 +102,7 @@ public class ArrayAlumno {
 		}
 		catch (Exception e) {}
 	}
+	
 	public String codigoCorrelativo() {
 		if (tamanio() == 0)
 			return "A"+20210001;
@@ -104,6 +112,7 @@ public class ArrayAlumno {
 			return ("A"+(codigoInt+1));
 		}
 	}
+	
 	public int FijamosEstado() {
 		return 0;
 	}
