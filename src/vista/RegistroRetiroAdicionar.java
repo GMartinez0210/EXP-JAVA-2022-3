@@ -336,7 +336,7 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 	
 		//	Metodo Hora
 	String Hora() {
-		return LocalTime.now() + "";
+		return LocalTime.now().getHour() +":"+ LocalTime.now().getMinute() + ":"+ LocalTime.now().getSecond();
 	}
 	
 		//	Rdbtn Consultar
