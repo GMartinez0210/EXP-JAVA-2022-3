@@ -182,6 +182,7 @@ public class MantAlumnoMod extends JInternalFrame{
 				modelo.addColumn("Edad");
 				modelo.addColumn("Celular");
 				modelo.addColumn("Estado");
+				table.setModel(modelo);
 				MostramosTabla();
 			}
 		}
@@ -519,21 +520,19 @@ public class MantAlumnoMod extends JInternalFrame{
 		apellidos = LeerString(text_Apellido);
 		dni = LeerString(text_DNI);
 		edad = LeerEntero(text_Edad);
-		celular = LeerEntero(text_Celular);
 		estado = LeerEntero(text_Estado);
 		
 		// validar
-		if(codAlumno == null || nombres == null || apellidos == null || dni == null || edad == 0 || celular == 0 || estado == -1) {
+		if(codAlumno == null || nombres == null || apellidos == null || dni == null || edad == 0 || estado == -1) {
 			return;
         } else {
         	// procesos
         	Alumno a = new Alumno();
-			a.setCodAlumno(codAlumno);
+        	a.setCodAlumno(codAlumno);
 			a.setNombres(nombres);
 			a.setApellidos(apellidos);
 			a.setDni(dni);
 			a.setEdad(edad);
-			a.setCelular(celular);
 			a.setEstado(estado);
         	
         	// Llamar al metodo a registar
@@ -549,15 +548,31 @@ public class MantAlumnoMod extends JInternalFrame{
 	}
 	
 	//	Metodo Consultar
-	void Consultar () {
-//		modelo.setRowCount(0);
-//		for ( Alumno a : gAlum.listar()) {
-//			Object[] row = {
-//					a.getCodAlumno(), a.getNombres(), 
-//					a.getApellidos(), a.getDni(), a.getEdad(), a.getCelular(), a.getEstado()
-//			};
-//			modelo.addRow(row);
-//		}
+	void Consultar() {
+		String codAlumno, dni;
+        codAlumno = LeerString(text_Codigo);
+        dni = LeerString(text_DNI);
+        modelo.setRowCount(0);
+        if(codAlumno.length() == 0 && dni.length() == 0) {
+        	return;
+        }else if(codAlumno.length() == 0) {
+        	 Alumno alumno = gAlum.listarAlumnoDni(dni);
+        	 System.out.println(alumno.getCodAlumno());
+             text_Codigo.setText(alumno.getCodAlumno());
+             text_Nombre.setText(""+ alumno.getNombres());
+             text_Apellido.setText(""+ alumno.getApellidos());
+             text_DNI.setText(""+ alumno.getDni());
+             text_Edad.setText(""+ alumno.getEdad());
+             text_Estado.setText(""+ alumno.getEstado());
+        }else {
+        	Alumno alumno = gAlum.listarAlumno(codAlumno);
+            text_Codigo.setText(alumno.getCodAlumno());
+            text_Nombre.setText(""+ alumno.getNombres());
+            text_Apellido.setText(""+ alumno.getApellidos());
+            text_DNI.setText(""+ alumno.getDni());
+            text_Edad.setText(""+ alumno.getEdad());
+            text_Estado.setText(""+ alumno.getEstado());
+        }
 	}
 
 	// 	Btn Procesar
@@ -568,6 +583,7 @@ public class MantAlumnoMod extends JInternalFrame{
 		else {
 			Modificar();
 		}
+		MostramosTabla();
 	}
 	
 	// Obtiene Código

@@ -14,4 +14,8 @@ public interface AlumnoDAO {
 	public int eliminar(Alumno a);
 	
 	public String leerCodigoAlumno();
+	
+	public Alumno listarAlumno(String codAlumno);
+	
+	public Alumno listarAlumnoDni(String dni);
 }

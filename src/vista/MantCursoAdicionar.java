@@ -4,7 +4,7 @@ import java.awt.EventQueue;
 
 import arrays.ArrayCurso;
 import entidad.Curso;
-
+import mantenimiento.GestionCursoDAO;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -25,6 +25,10 @@ import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
 
 public class MantCursoAdicionar extends JInternalFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JLabel lblAdicionarCurso;
 	private JLabel lblNewLabel_1;
 	private JTextField text_Codigo;
@@ -38,10 +42,11 @@ public class MantCursoAdicionar extends JInternalFrame {
 	private JLabel lblNewLabel;
 	private JLabel lblNewLabel_2;
 	private JLabel lblNewLabel_3;
-	private JComboBox CBO_Ciclo;
+	private JComboBox<?> CBO_Ciclo;
 	private JTable table;
 	private DefaultTableModel modelo;
-
+	
+	GestionCursoDAO gCurso = new GestionCursoDAO();	
 		//	Array Gobloterráqueo
 	ArrayCurso AC = new ArrayCurso();
 	
@@ -87,13 +92,12 @@ public class MantCursoAdicionar extends JInternalFrame {
 		}
 		{
 			text_Codigo = new JTextField();
-			text_Codigo.setEditable(false);
 			text_Codigo.setColumns(10);
 			text_Codigo.setBounds(125, 112, 140, 19);
 			getContentPane().add(text_Codigo);
 				
 				//	Agregamos el codigo correlativo por deault
-			text_Codigo.setText("" + AC.codigoCorrelativo());
+			text_Codigo.setText("" + gCurso.leerCodigo());
 
 		}
 		{
@@ -198,7 +202,7 @@ public class MantCursoAdicionar extends JInternalFrame {
 		modelo.addColumn("Creditos");
 		modelo.addColumn("Horas");
 		table.setModel(modelo);
-		MostramosTabla();
+		leerDatos();
 	}
 	
 		//	Metodo Solo Numeros
@@ -314,59 +318,131 @@ public class MantCursoAdicionar extends JInternalFrame {
 		Limpiar();
 	}
 	
-		//	Metodo Leer Datos Completos
-	void LeerDatosCompletos() {
-		String Asignatura = LeerString(text_Asignatura);
-		if (Asignatura.length() != 0) {
-			try {
-				int Ciclo = Integer.parseInt(CBO_Ciclo.getSelectedItem().toString());
-				if (Ciclo >= 1 && Ciclo <= 6){
-					try {
-						int Creditos = LeerEntero(text_Creditos);
-						if (Creditos > 0) {
-							try {
-								int Horas = LeerEntero(text_Horas);
-								if (Horas >= 1 && Horas <= 5) {
-									AdicionamosCurso(Asignatura, Ciclo, Creditos, Horas);
-								}
-								else {
-									Mal("HORAS", text_Horas);
-								}
-							}
-							catch (Exception e1) {
-								Error("HORAS", text_Horas);
-							}
-						}
-						else {
-							Mal("CREDITO", text_Creditos);
-						}
-					}
-					catch (Exception e1) {
-						Error("CREDITO", text_Creditos);
-					}
-				}
-				else {
-					Mal("CICLO", null);
-					CBO_Ciclo.requestFocus();
-				}
-			}
-			catch (Exception e1) {
-				JOptionPane.showMessageDialog(this, "No ha seleccionado el CICLO", "ERROR", 0);
-				CBO_Ciclo.setSelectedIndex(0);
+	void registrarDatos(){
+		// variables
+		String codCurso, asignatura;
+		int ciclo,creditos, horas ;
+		// entradas
+		codCurso = gCurso.leerCodigo();
+		asignatura = getAsignatura();
+		ciclo = getCiclo();
+		creditos = getCreditos();
+		horas = getHoras();
+		
+		// validar
+		if(codCurso == null || asignatura == null || ciclo == 0|| creditos ==0 || horas == 0) {
+			return;
+		} else {
+			//procesos
+			//Crear un objeto de la clave usuario
+			Curso c = new Curso();
+			c.setCodCurso(codCurso);
+			c.setAsignaturas(asignatura);
+			c.setCiclo(ciclo);
+			c.setCreditos(creditos);
+			c.setHoras(horas);
+			
+			//llamar el metodo registrar
+			int res = gCurso.registrar(c);
+			//validar el resultado del proceso de registrar
+			if(res == 0) {
+				mensajeError("Error en el registro");
+			} else {
+				mensajeExitoso("Registro exitoso");
 			}
 		}
-		else {
-			Error("ASIGNATURA", text_Asignatura);
+		
+	}
+
+	private String getAsignatura() {
+		String asignatura = null;
+		try {
+			asignatura = text_Asignatura.getText(); 
+			if(asignatura == null) mensajeError("Selecciona un ciclo");
+			
+		}catch (Exception e) {
+			mensajeError("No ha seleccionado ningun ciclo");
 		}
+    	return asignatura;
+	}
+
+	int getCiclo() {
+		int ciclo = 0;
+		try {
+			ciclo = CBO_Ciclo.getSelectedIndex(); 
+			if(ciclo == 0) mensajeError("Selecciona un ciclo");
+			
+		}catch (Exception e) {
+			mensajeError("No ha seleccionado ningun ciclo");
+		}
+    	return ciclo;
 	}
 	
+	int getCreditos() {
+
+    	int creditos = 0;
+
+		try {
+			creditos = Integer.parseInt(text_Creditos.getText()); 
+			if(creditos == 0) mensajeError("Selecciona un ciclo");
+			
+		}catch (Exception e) {
+			mensajeError("No ha seleccionado ningun ciclo");
+		}
+
+    	return creditos;
+    
+	}
+	
+	int getHoras() {
+    	int horas = 0;
+		try {
+			horas = Integer.parseInt(text_Horas.getText()); 
+			if(horas == 0) mensajeError("Selecciona un ciclo");
+			
+		}catch (Exception e) {
+			mensajeError("No ha seleccionado ningun ciclo");
+		}
+
+    	return horas;
+    
+	}
+	
+	void leerDatos() {
+		modelo.setRowCount(0);
+		
+		for ( Curso curso : gCurso.leer()) {
+			Object[] row = {
+					curso.getCodCurso(),
+					curso.getAsignatura(),
+					curso.getCiclo(),
+					curso.getCreditos(),
+					curso.getHoras(),
+			};
+			modelo.addRow(row);
+		}
+	}
+
 		//	Metodo Procesar
 	void ProcesarAdicionar() {
-		LeerDatosCompletos();
+		registrarDatos();
+		
+		
 	}
+	
 	
 		// Btn Adicionar
 	protected void actionPerformedBtn_Adicionar(ActionEvent e) {
 		ProcesarAdicionar();
+		leerDatos();
+	}
+	private void mensajeExitoso(String msj) {
+		 JOptionPane.showMessageDialog(this, msj, "Registro bien", 1);
+		
+	}
+	private void mensajeError(String msj) {
+		  JOptionPane.showMessageDialog(this, msj, "Error", 0);
+		// TODO Auto-generated method stub
+		
 	}
 }
