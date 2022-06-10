@@ -1,8 +1,18 @@
 package entidad;
 
 public class Matricula {
-	private int idMatricula;
+	private int idMatricula, estado;
 	private String numMatricula, codAlumno, codCurso, fecha, hora;
+	
+	
+	public Matricula (String numMatricula, String codAlumno, String codCurso, int estado, String fecha, String hora) {
+		this.numMatricula = numMatricula;
+		this.codAlumno = codAlumno;
+		this.codCurso = codCurso;
+		this.estado = estado;
+		this.fecha = fecha;
+		this.hora = hora;
+	}
 	
 	public Matricula (String numMatricula, String codAlumno, String codCurso, String fecha, String hora) {
 		this.numMatricula = numMatricula;
@@ -53,4 +63,11 @@ public class Matricula {
 	public String getHora () {
 		return hora;
 	}
+	public int getEstado() {
+		return estado;
+	}
+	public void setEstado(int estado) {
+		this.estado = estado;
+	}
+	
 }
