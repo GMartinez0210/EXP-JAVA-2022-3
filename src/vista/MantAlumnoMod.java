@@ -557,7 +557,6 @@ public class MantAlumnoMod extends JInternalFrame{
         	return;
         }else if(codAlumno.length() == 0) {
         	 Alumno alumno = gAlum.listarAlumnoDni(dni);
-        	 System.out.println(alumno.getCodAlumno());
              text_Codigo.setText(alumno.getCodAlumno());
              text_Nombre.setText(""+ alumno.getNombres());
              text_Apellido.setText(""+ alumno.getApellidos());
