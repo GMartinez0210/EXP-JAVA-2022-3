@@ -28,6 +28,7 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 
@@ -49,7 +50,6 @@ public class RegistroRetiroMod extends JInternalFrame {
 	private JLabel lblNewLabel_3;
 	private JLabel lblNewLabel_4;
 	private JButton btn_Consultar;
-	private JButton btn_Modificar;
 	private JButton btn_Eliminar;
 	private JTextField text_Curso;
 	private JLabel lblNewLabel_5;
@@ -65,6 +65,8 @@ public class RegistroRetiroMod extends JInternalFrame {
 	
 		// GestionDAO
 	GestionRetiroDAO gRetiro = new GestionRetiroDAO();
+	
+	DefaultTableModel model = new DefaultTableModel();
 	
 	/**
 	 * Launch the application.
@@ -116,33 +118,7 @@ public class RegistroRetiroMod extends JInternalFrame {
 		});
 		rdbtn_Modificar.setBounds(156, 38, 103, 21);
 		getContentPane().add(rdbtn_Modificar);
-		JRadioButton rdbtn_Eliminar = new JRadioButton("Eliminar");
-		rdbtn_Eliminar.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		rdbtn_Eliminar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				actionPerformedRdbtn_Eliminar(e);
-			}
-		});
-		rdbtn_Eliminar.setBounds(261, 38, 90, 21);
-		getContentPane().add(rdbtn_Eliminar);
-		group.add(rdbtn_Consultar);
-		group.add(rdbtn_Eliminar);
-		group.add(rdbtn_Modificar);
 
-		
-		
-		
-		// Hacemos el Default de la Tabla
-		//	Mostramos la tabla
-		modelo = new DefaultTableModel();
-		modelo.addColumn("N° Retiro");
-		modelo.addColumn("N° Matricula");
-		modelo.addColumn("Cod. Alumno");
-		modelo.addColumn("Cod. Curso");
-		modelo.addColumn("Fecha");
-		modelo.addColumn("Hora");
-		MostramosTabla();
-		
 		btn_Limpiar = new JButton("");
 		btn_Limpiar.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		btn_Limpiar.addActionListener(new ActionListener() {
@@ -229,26 +205,14 @@ public class RegistroRetiroMod extends JInternalFrame {
 		btn_Consultar.setBounds(480, 51, 96, 21);
 		getContentPane().add(btn_Consultar);
 		
-		btn_Modificar = new JButton("Modificar");
-		btn_Modificar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				actionPerformedBtn_Modificar(e);
-			}
-		});
-		btn_Modificar.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		btn_Modificar.setEnabled(false);
-		btn_Modificar.setBounds(480, 120, 96, 21);
-		getContentPane().add(btn_Modificar);
-		
 		btn_Eliminar = new JButton("Eliminar");
 		btn_Eliminar.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		btn_Eliminar.setEnabled(false);
 		btn_Eliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				actionPerformedBtnNewButton_1(e);
 			}
 		});
-		btn_Eliminar.setBounds(480, 185, 96, 21);
+		btn_Eliminar.setBounds(480, 82, 96, 21);
 		getContentPane().add(btn_Eliminar);
 		
 		text_Curso = new JTextField();
@@ -272,10 +236,23 @@ public class RegistroRetiroMod extends JInternalFrame {
 		scrollPane.setBounds(10, 266, 588, 260);
 		getContentPane().add(scrollPane);
 		
+		group.add(rdbtn_Consultar);
+		group.add(rdbtn_Modificar);
+		
 		table = new JTable();
 		table.setFillsViewportHeight(true);
+		
 		scrollPane.setViewportView(table);
-		table.setModel(modelo);
+
+		model.addColumn("N° Retiro");
+		model.addColumn("N° Matricula");
+		model.addColumn("Cod. Alumno");
+		model.addColumn("Cod. Curso");
+		model.addColumn("Fecha");
+		model.addColumn("Hora");
+		
+		table.setModel(model);
+		
 		MostramosTabla();
 	}
 	
@@ -318,7 +295,16 @@ public class RegistroRetiroMod extends JInternalFrame {
 		return text.getText().trim().toString();
 	}
 
+	//	Metodo Exito
+	void Exito(String x) {
+		JOptionPane.showMessageDialog(this, x, "James School", 1);
+	}
+	
 	//	Metodo Error
+	void Error(String x) {
+		JOptionPane.showMessageDialog(this, x, "ERROR", 0);
+	}
+	
 	void Error(String x, JTextField text) {
 		JOptionPane.showMessageDialog(this, "El campo " + x + " no ha sido llenado", "ERROR", 0);
 		text.setText("");
@@ -343,17 +329,19 @@ public class RegistroRetiroMod extends JInternalFrame {
 	
 	//	Método Mostrar Tabla
 	void MostramosTabla() {
-		modelo.setRowCount(0);
-		for (int i = 0; i < AR.tamanio(); i++) {
-			Object [] fila = {
-					AR.obtener(i).getNumRetiro(),
-					AR.obtener(i).getNumMatricula(),
-					AM.buscar(AR.obtener(i).getNumMatricula()).getCodAlumno(),
-					AM.buscar(AR.obtener(i).getNumMatricula()).getCodCurso(),
-					AR.obtener(i).getFecha(),
-					AR.obtener(i).getHora(),
+		model.setRowCount(0);
+		
+		ArrayList<Retiro> retiros = gRetiro.leer();
+		for (Retiro retiro : retiros) {
+			Object [] row = {
+					retiro.getNumRetiro(),
+					retiro.getNumMatricula(),
+					retiro.getCodAlumno(),
+					retiro.getCodCurso(),
+					retiro.getFecha(),
+					retiro.getHora()
 			};
-			modelo.addRow(fila);
+			model.addRow(row);
 		}
 	}
 	//Metodo Obtener Retiro
@@ -370,41 +358,14 @@ public class RegistroRetiroMod extends JInternalFrame {
 
 	//Radious button Modificar
 	protected void actionPerformedRdbtn_Modificar(ActionEvent e) {
-		btn_Modificar.setEnabled(true);
-		btn_Eliminar.setEnabled(false);
-		btn_Consultar.setEnabled(false);
 		text_Retiro.setEditable(false);
-		text_Matricula.setEditable(false);
-		text_Alumno.setEditable(false);
 		text_Curso.setEditable(true);
-		text_Fecha.setEditable(false);
-		text_Hora.setEditable(false);
 	}
 	
 	//Radious button Consultar
 	protected void actionPerformedRdbtn_Consultar(ActionEvent e) {
-		btn_Modificar.setEnabled(false);
-		btn_Eliminar.setEnabled(false);
-		btn_Consultar.setEnabled(true);
 		text_Retiro.setEditable(true);
-		text_Matricula.setEditable(false);
-		text_Alumno.setEditable(false);
 		text_Curso.setEditable(false);
-		text_Fecha.setEditable(false);
-		text_Hora.setEditable(false);
-	}
-	
-	//Radious button Eliminar
-	protected void actionPerformedRdbtn_Eliminar(ActionEvent e) {
-		btn_Modificar.setEnabled(false);
-		btn_Eliminar.setEnabled(true);
-		btn_Consultar.setEnabled(false);
-		text_Retiro.setEditable(false);
-		text_Matricula.setEditable(false);
-		text_Alumno.setEditable(false);
-		text_Curso.setEditable(false);
-		text_Fecha.setEditable(false);
-		text_Hora.setEditable(false);
 	}
 	
 	// Botón limpiar
@@ -414,22 +375,6 @@ public class RegistroRetiroMod extends JInternalFrame {
 	
 	//Boton Eliminar
 	protected void actionPerformedBtnNewButton_1(ActionEvent e) {
-		/*String num = LeerString(text_Retiro);
-		Retiro ret = getRetiro();
-		if(num.length() != 0) {
-			if(ret != null){
-				AR.eliminar(ret);
-				MostramosTabla();
-				Limpiar();	
-			}
-			else {
-				NoExiste("Número de Retiro", text_Retiro);
-			}
-		}
-		else {
-			Error("N° Retiro", text_Retiro);
-		}*/
-		
 		String numRetiro = LeerString(text_Retiro);
 		if(numRetiro.length() != 0) {
 			Retiro retiro = gRetiro.leer(numRetiro);
@@ -437,7 +382,13 @@ public class RegistroRetiroMod extends JInternalFrame {
 				int confirmacion = JOptionPane.showConfirmDialog(this, "¿Desea eliminar el Retiro?", "James School", JOptionPane.YES_NO_OPTION);
 				
 				if (confirmacion == 0) {
+					int eliminar = gRetiro.eliminar(numRetiro);
+					if (eliminar == 0) {
+						Error("No se pudo eliminar");
+						return;
+					}
 					
+					Exito("Exitosa eliminación del Retiro; " + numRetiro);
 				}
 				
 				MostramosTabla();
@@ -462,61 +413,40 @@ public class RegistroRetiroMod extends JInternalFrame {
 	
 	//Boton Consultar
 	protected void actionPerformedBtn_Consultar(ActionEvent e) {
-		/*String Retiro = LeerString(text_Retiro);
-		if(Retiro.length() != 0) {
-			if(AR.buscar(Retiro) != null) {
-				text_Matricula.setText(AR.buscar(Retiro).getNumMatricula());
-				String Matricula = AR.buscar(Retiro).getNumMatricula();
-				if(Matricula.length() != 0) {
-					text_Curso.setText(AM.buscar(Matricula).getCodCurso());
-					text_Alumno.setText(AM.buscar(Matricula).getCodAlumno());
-					text_Fecha.setText(AR.buscar(Retiro).getFecha());
-					text_Hora.setText(AR.buscar(Retiro).getHora());
-				}
-			}
-			else {
-				NoExiste("N° MATRICULA", text_Matricula);
-			}
-		}
-		else {
-			Error("MATRICULA", text_Retiro);
-		}*/
-		
-		String codRetiro = LeerString(text_Retiro);
-		if(codRetiro.length() != 0) {
-			if(gRetiro.leer(codRetiro) != null) {
-				Retiro retiro = new Retiro();
-				String matricula = retiro.getNumMatricula();
-				text_Matricula.setText(retiro.getNumMatricula());
-				if(matricula.length() != 0) {
-					text_Curso.setText(AM.buscar(matricula).getCodCurso());
-					text_Alumno.setText(AM.buscar(matricula).getCodAlumno());
+		if (rdbtn_Consultar.isSelected()) {
+			String codRetiro = LeerString(text_Retiro);
+			if(codRetiro.length() != 0) {
+				Retiro retiro = gRetiro.leer(codRetiro);
+				if(retiro != null) {
+					text_Matricula.setText(retiro.getNumMatricula());
+					text_Curso.setText(retiro.getCodCurso());
+					text_Alumno.setText(retiro.getCodAlumno());
 					text_Fecha.setText(retiro.getFecha());
 					text_Hora.setText(retiro.getHora());
 				}
+				else {
+					NoExiste("N° MATRICULA", text_Matricula);
+				}
 			}
 			else {
-				NoExiste("N° MATRICULA", text_Matricula);
+				Error("MATRICULA", text_Retiro);
 			}
 		}
-		else {
-			Error("MATRICULA", text_Retiro);
+		else if(rdbtn_Modificar.isSelected()) {
+			String numRetiro = LeerString(text_Retiro);
+			String codCurso = LeerString(text_Curso);
+			if(codCurso.length() != 0) {
+				int actualizar = gRetiro.actualizar(numRetiro, codCurso);
+				
+				if(actualizar == 0) {
+					Error("No se pudo actualizar");
+					return;
+				}
+				
+				Exito("Se actualizó correctamente el retiro: " + numRetiro);
+			}
 		}
+	
+		MostramosTabla();
 	}	
-	//Botón Modificar
-	protected void actionPerformedBtn_Modificar(ActionEvent e) {
-		String Matricula = LeerString(text_Matricula);
-		String codCurso = LeerString(text_Curso);
-		if(codCurso.length() != 0) {
-			//	Curso curso = ObtenerCurso();
-			Curso curso = AC.buscar(codCurso);
-			if(curso != null) {
-				//curso.setCodCurso(codCurso);
-				// AA.buscar(curso.getCodAlumno());
-				AM.buscar(Matricula).setCodCurso(codCurso);
-				AM.actualizarArchivo();
-				MostramosTabla();
-			}
-		}
-	}
 }

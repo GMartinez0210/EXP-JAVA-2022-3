@@ -17,6 +17,9 @@ import arrays.ArrayMatricula;
 import entidad.Alumno;
 import entidad.Curso;
 import entidad.Matricula;
+import mantenimiento.GestionAlumnoDAO;
+import mantenimiento.GestionCursoDAO;
+import mantenimiento.GestionMatriculaDAO;
 
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
@@ -24,6 +27,7 @@ import javax.swing.JTable;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -43,10 +47,9 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 	private JTable table;
 	private DefaultTableModel modelo;
 
-		//	Arrays Globoterraqueos
-	ArrayMatricula AM = new ArrayMatricula();
-	ArrayAlumno AA = new ArrayAlumno();
-	ArrayCurso AC = new ArrayCurso();
+	GestionMatriculaDAO gMatricula = new GestionMatriculaDAO();
+	GestionAlumnoDAO gAlumno = new GestionAlumnoDAO();
+	GestionCursoDAO gCurso = new GestionCursoDAO();
 	
 	/**
 	 * Launch the application.
@@ -78,7 +81,7 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 		{
 			text_Matricula = new JTextField();
 			text_Matricula.setFont(new Font("Tahoma", Font.PLAIN, 12));
-			text_Matricula.setText(AM.codigoCorrelativo());
+			text_Matricula.setText(gMatricula.obtenerCodigoCo());
 			text_Matricula.setEditable(false);
 			text_Matricula.setColumns(10);
 			text_Matricula.setBounds(153, 130, 140, 19);
@@ -158,7 +161,7 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 					actionPerformedBtn_Adicionar(e);
 				}
 			});
-			btn_Adicionar.setBounds(395, 164, 100, 21);
+			btn_Adicionar.setBounds(472, 164, 100, 21);
 			getContentPane().add(btn_Adicionar);
 		}
 		
@@ -170,7 +173,7 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 		modelo.addColumn("Fecha");
 		modelo.addColumn("Hora");
 		table.setModel(modelo);
-		MostramosTabla();
+		mostramosTabla();
 	}
 	
 		//	Metodo Solo Numeros
@@ -244,18 +247,15 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 	}
 	
 		// Metodo Mostramos Tabla
-	void MostramosTabla() {
-		int rowcount = 0;
-		modelo.setRowCount(rowcount);
-		for (int i = 0; i < AM.tamanio(); i++) {
-			Object [] fila = {
-					AM.obtener(i).getNumMatricula(),
-					AM.obtener(i).getCodAlumno(),
-					AM.obtener(i).getCodCurso(),
-					AA.buscarCod(AM.obtener(i).getCodAlumno()).getEstado(),
-					AM.obtener(i).getFecha(),
-					AM.obtener(i).getHora(),
-			};
+	void mostramosTabla() {
+		modelo.setRowCount(0);
+		
+		ArrayList<Matricula> matriculas = gMatricula.leer();
+		
+		for (Matricula m : matriculas) {
+			int cod = gAlumno.obtenerEstado(m.getCodAlumno());
+			Object fila[] = { m.getNumMatricula(), m.getCodAlumno(), m.getCodCurso(), cod, m.getFecha(), m.getHora() };
+
 			modelo.addRow(fila);
 		}
 	}
@@ -268,47 +268,58 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 		//	Metodo Hora
 	String Hora() {
 		return LocalTime.now() + "";
-	}
-	
-	
-		//	Metodo Adicionamos
-	void Adicionamos (String Alumno, String Curso) {
-		Matricula nuevo = new Matricula (AM.codigoCorrelativo(), Alumno, Curso, Fecha(), Hora());
-		AM.adicionar(nuevo);
-		MostramosTabla();
-		text_Matricula.setText(AM.codigoCorrelativo());
-	}
-	
+	}	
 
 
 	//	Btn Adicionar
 	protected void actionPerformedBtn_Adicionar(ActionEvent e) {
-		String Alumno = LeerString(text_Alumno);
-		if (Alumno.length() != 0) {
-			Alumno alumno = AA.buscarCod(Alumno);
-			if (alumno != null) {
-				String Curso = LeerString(text_Curso);
-				if (Curso.length() != 0) {
-					Curso curso = AC.buscar(Curso);
-					if (curso != null) {
-						alumno.setEstado(1);
-						AA.actulizarArchivos();
-						Adicionamos(Alumno, Curso);
-					}
-					else {
-						NoExiste("CURSO", text_Curso);
-					}
-				}
-				else {
-					Error("CURSO", text_Curso);
-				}
-			}
-			else {
-				NoExiste("ALUMNO", text_Alumno);
+		adicionarMatricula();
+	}
+
+	private void adicionarMatricula() {
+		// TODO Auto-generated method stub
+		//int idM;
+		String numM, codA, codC, fecha, hora;
+		// Obtener los datos de GUI
+		numM = text_Matricula.getText();
+		codA = text_Alumno.getText();
+		codC = text_Curso.getText();
+		hora = Hora();
+		fecha = Fecha();
+		// validar
+		if (codA == null || codC == null) {
+			return;
+		} else {
+			// crear un objeto de la clase "Usuario"
+			Matricula m = new Matricula();
+			// setear --> asignar los valores obtenidos de la GUI a los atributos privados
+			m.setNumMatricula(numM);
+			m.setCodAlumno(codA);
+			m.setCodCurso(codC);
+			m.setFecha(fecha);
+			m.setHora(hora);
+
+			// llamar al proceso actualizar
+			int ok = gMatricula.registrar(m);
+			// validar el resultado del proceso actualizar
+			if (ok == 0) {
+				mensajeError("Error en la actualización ");
+			} else {
+				mensajeExitoso("Usuario actualizado");
+				text_Matricula.setText(gMatricula.obtenerCodigoCo());
+				mostramosTabla();
 			}
 		}
-		else {
-			Error("ALUMNO", text_Alumno);
-		}
+		
+		
+	}
+
+	private void mensajeExitoso(String msj) {
+		JOptionPane.showMessageDialog(this, msj);
+		
+	}
+	
+	private void mensajeError(String msj) {
+		JOptionPane.showMessageDialog(this, msj, "Error", 0);
 	}
 }

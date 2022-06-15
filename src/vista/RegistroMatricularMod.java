@@ -12,21 +12,21 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
-import arrays.ArrayAlumno;
-import arrays.ArrayCurso;
-import arrays.ArrayMatricula;
 import entidad.Matricula;
+import mantenimiento.GestionAlumnoDAO;
+import mantenimiento.GestionCursoDAO;
+import mantenimiento.GestionMatriculaDAO;
 
 import javax.swing.JRadioButton;
-import javax.swing.JComboBox;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class RegistroMatricularMod extends JInternalFrame {
 	private JTable table;
@@ -34,7 +34,6 @@ public class RegistroMatricularMod extends JInternalFrame {
 	private JLabel lblAccion;
 	private JRadioButton rdbtn_Modificar;
 	private JRadioButton rdbtn_Consultar;
-	private JRadioButton rdbtn_Eliminar;
 	private DefaultTableModel modelo;
 	ButtonGroup btnsGrupo = new ButtonGroup();
 	private JLabel lblNewLabel;
@@ -50,11 +49,12 @@ public class RegistroMatricularMod extends JInternalFrame {
 	private JButton btnLimpiar;
 	private JButton btnEliminar;
 	private JButton btnConsultar;
-	private JButton btnModificar;
-	ArrayMatricula AM = new ArrayMatricula();
-	ArrayAlumno AA = new ArrayAlumno();
-	ArrayCurso AC = new ArrayCurso();
+	
+	DefaultTableModel model = new DefaultTableModel();
 
+	GestionMatriculaDAO gMatricula = new GestionMatriculaDAO();
+	GestionAlumnoDAO gAlumno = new GestionAlumnoDAO();
+	GestionCursoDAO gCurso = new GestionCursoDAO();
 
 	/**
 	 * Launch the application.
@@ -90,6 +90,12 @@ public class RegistroMatricularMod extends JInternalFrame {
 			getContentPane().add(scrollPane);
 			{
 				table = new JTable();
+				table.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						mouseClickedTable(e);
+					}
+				});
 				scrollPane.setViewportView(table);
 			}
 		}
@@ -123,18 +129,6 @@ public class RegistroMatricularMod extends JInternalFrame {
 			rdbtn_Consultar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 			rdbtn_Consultar.setBounds(172, 33, 103, 21);
 			getContentPane().add(rdbtn_Consultar);
-		}
-		{
-			rdbtn_Eliminar = new JRadioButton("Eliminar");
-			rdbtn_Eliminar.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					actionPerformedRdbtn_Eliminar(e);
-				}
-			});
-			btnsGrupo.add(rdbtn_Eliminar);
-			rdbtn_Eliminar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-			rdbtn_Eliminar.setBounds(444, 32, 109, 23);
-			getContentPane().add(rdbtn_Eliminar);
 		}
 		{
 			lblNewLabel = new JLabel("Num. Matricula");
@@ -226,7 +220,7 @@ public class RegistroMatricularMod extends JInternalFrame {
 					actionPerformedBtnLimpiar(e);
 				}
 			});
-			btnLimpiar.setBounds(429, 143, 89, 23);
+			btnLimpiar.setBounds(488, 188, 89, 23);
 			getContentPane().add(btnLimpiar);
 		}
 		{
@@ -236,7 +230,7 @@ public class RegistroMatricularMod extends JInternalFrame {
 					actionPerformedBtnEliminar(e);
 				}
 			});
-			btnEliminar.setBounds(444, 188, 89, 23);
+			btnEliminar.setBounds(488, 37, 89, 23);
 			getContentPane().add(btnEliminar);
 		}
 		{
@@ -246,18 +240,8 @@ public class RegistroMatricularMod extends JInternalFrame {
 					actionPerformedBtnConsultar(e);
 				}
 			});
-			btnConsultar.setBounds(94, 188, 89, 23);
+			btnConsultar.setBounds(392, 188, 89, 23);
 			getContentPane().add(btnConsultar);
-		}
-		{
-			btnModificar = new JButton("Modificar");
-			btnModificar.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					actionPerformedBtnModificar(e);
-				}
-			});
-			btnModificar.setBounds(267, 188, 89, 23);
-			getContentPane().add(btnModificar);
 		}
 		
 			// Seteamos valoreas al tipo consultar
@@ -267,54 +251,35 @@ public class RegistroMatricularMod extends JInternalFrame {
 		text_Fecha.setEditable(false);
 		text_Hora.setEditable(false);
 		btnConsultar.setEnabled(true);
-		btnEliminar.setEnabled(false);
-		btnModificar.setEnabled(false);
 		
 			// Hacemos el Default de la Tabla
-		modelo = new DefaultTableModel();
-		modelo.addColumn("Matricula");
-		modelo.addColumn("Cod. Alumno");
-		modelo.addColumn("Cod. Curso");
-		modelo.addColumn("Fecha Add");
-		modelo.addColumn("Hora Add");
-		table.setModel(modelo);
+		model.addColumn("Matricula");
+		model.addColumn("Cod. Alumno");
+		model.addColumn("Cod. Curso");
+		model.addColumn("Fecha Add");
+		model.addColumn("Hora Add");
+		table.setModel(model);
 		MostramosTabla();
 	}	
 	
 		//	Radious Button Consultar
 	protected void actionPerformedRdbtn_Consultar(ActionEvent e) {
+		btnConsultar.setText("Consultar");
 		text_Codigo.setEditable(true);
 		text_CodAlumno.setEditable(false);
 		text_CodCurso.setEditable(false);
 		text_Fecha.setEditable(false);
 		text_Hora.setEditable(false);
-		btnConsultar.setEnabled(true);
-		btnEliminar.setEnabled(false);
-		btnModificar.setEnabled(false);
 	}
 	
 		//	Radious Button Modificar
 	protected void actionPerformedRdbtn_Modificar(ActionEvent e) {
-		text_Codigo.setEditable(true);
+		btnConsultar.setText("Modificar");
+		text_Codigo.setEditable(false);
 		text_CodAlumno.setEditable(false);
 		text_CodCurso.setEditable(true);
 		text_Fecha.setEditable(false);
 		text_Hora.setEditable(false);
-		btnConsultar.setEnabled(true);
-		btnEliminar.setEnabled(false);
-		btnModificar.setEnabled(true);
-	}
-		
-		//  Radious Button Eliminar
-	protected void actionPerformedRdbtn_Eliminar(ActionEvent e) {
-		text_Codigo.setEditable(true);
-		text_CodAlumno.setEditable(false);
-		text_CodCurso.setEditable(false);
-		text_Fecha.setEditable(false);
-		text_Hora.setEditable(false);
-		btnConsultar.setEnabled(false);
-		btnEliminar.setEnabled(true);
-		btnModificar.setEnabled(false);
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////
@@ -323,36 +288,14 @@ public class RegistroMatricularMod extends JInternalFrame {
 	
 	// Mostrar tabla
 	void MostramosTabla() {
-		int rowCount = 0;
-		for (int i  = 0; i < AM.tamanio(); i++) {
-			int est = AA.buscarCod(AM.obtener(i).getCodAlumno()).getEstado();
-			if (est != 2) {
-				modelo.setRowCount(rowCount);
-				Object [] fila = {
-						AM.obtener(i).getNumMatricula(),
-						AM.obtener(i).getCodAlumno(),
-						AM.obtener(i).getCodCurso(),
-						AM.obtener(i).getFecha(),
-						AM.obtener(i).getHora(),
-				};
-				modelo.addRow(fila);
-				rowCount++;
-			}
-		}
-	}
-	// Error
-	void Error(String x, JTextField text) {
-		JOptionPane.showMessageDialog(this, x, "ERROR", 0);
-		text.setText("");
-		text.requestFocus();
-	}
-	// Preguntar 
-	boolean Pregunta (String x) {
-		int salida = JOptionPane.showConfirmDialog(this, x, "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-		if (salida == 1) {
-			return false;
-		} else {
-			return true;
+		model.setRowCount(0);
+		
+		ArrayList<Matricula> matriculas = gMatricula.leer();
+		
+		for (Matricula m : matriculas) {
+			Object fila[] = { m.getNumMatricula(), m.getCodAlumno(), m.getCodCurso(), m.getFecha(), m.getHora() };
+
+			model.addRow(fila);
 		}
 	}
 	// Metodo leer 
@@ -367,23 +310,6 @@ public class RegistroMatricularMod extends JInternalFrame {
 		text_Fecha.setText("");
 		text_Hora.setText("");
 	}
-	// Metodo obtener alumno
-	Matricula ObtenerMatricula() {
-		for (int i = 0; i < AM.tamanio(); i++) {
-			if (AM.obtener(i).getNumMatricula().equals(LeerCampo(text_Codigo))) {
-				return AM.obtener(i);
-			}
-		}
-		return null;
-	}
-	boolean ExisteCurso () {
-		for (int i = 0; i < AC.tamanio(); i++) {
-			if (AC.obtener(i).getCodCurso().equals(LeerCampo(text_CodCurso))) {
-				return true;
-			}
-		}
-		return false;
-	}
 
 	/////////////////////////////////////////////////////////////////////////////////
 	//////////////// BOTONES
@@ -396,134 +322,113 @@ public class RegistroMatricularMod extends JInternalFrame {
 	
 	// Boton Eliminar
 	protected void actionPerformedBtnEliminar(ActionEvent e) {
-		String cod = LeerCampo(text_Codigo);
-		Matricula m = ObtenerMatricula();
-		if(cod.length() != 0) {
-			if (m != null) {
-				int estado = AA.buscarCod(m.getCodAlumno()).getEstado();
-					if (estado != 2) {
-						Boolean pg = Pregunta("¿Seguro que quieres CANCELAR matricula?");
-						if (pg) {
-							AM.eliminar(m);
-							MostramosTabla();
-							Limpiar();
-						}						
-						Error("Se cancelo Matricula", text_Codigo);
-					} else {						
-						Error("El alumno figura como RETIRADO, \nNo se puede Retirar denuevo", text_Codigo);
-					}
-			} else {				
-				Error("El codigo no existe", text_Codigo);
-			}
-		} else {
-			Error("El campo de la Matricula no puede estar vacio", text_Codigo);
-		}
+		eliminarMatricula();
 	}
 	
+	private void eliminarMatricula() {
+		String nMtricula;
+		nMtricula = text_Codigo.getText();
+	
+		if (nMtricula == null) {
+			mensajeError("Error");
+		} else {
+			
+			int confirmacion = JOptionPane.showConfirmDialog(null, "¿Eliminar Usuario?", "Sistema", JOptionPane.YES_NO_OPTION);
+			if (confirmacion == 0) {
+				
+				int ok = gMatricula.eliminar(nMtricula);
+	    	
+				if (ok == 0) {
+					mensajeError("Error en la eliminacion");
+				} else {
+					Limpiar();
+					mensajeExitoso("Usuario eliminado");
+					MostramosTabla();
+				}
+				
+			} else {
+				mensajeExitoso("Cancelación exitosa");
+			}
+			
+		}
+	}
+
 	// Boton Consultar
 	protected void actionPerformedBtnConsultar(ActionEvent e) {
-		String cod = LeerCampo(text_Codigo);;
-		Matricula m = ObtenerMatricula();
-		if(cod.length() != 0) {
-			if (m != null) {
-				text_CodAlumno.setText(m.getCodAlumno());
-				text_CodCurso.setText(m.getCodCurso());
-				text_Fecha.setText(m.getFecha());
-				text_Hora.setText(m.getHora());
-			} else {				
-				Error("El codigo no existe", text_Codigo);
-			}
+		if (rdbtn_Consultar.isSelected()) consultarMatricula();
+		else if (rdbtn_Modificar.isSelected()) actualizarMatricula();
+		
+		MostramosTabla();
+	}
+	
+	private void consultarMatricula() {
+		Matricula m = gMatricula.consultar(text_Codigo.getText());
+		
+		if (m.getNumMatricula() == null) {
+			mensajeError("Matricula no existe");
+			text_Codigo.requestFocus();
 		} else {
-			Error("El campo de la Matricula no puede estar vacio", text_Codigo);
+			text_CodAlumno.setText(m.getCodAlumno());
+			text_CodCurso.setText(m.getCodCurso());
+			text_Fecha.setText(m.getFecha());
+			text_Hora.setText(m.getHora());
 		}
 	}
 	
-	// Boton Modificar
-	protected void actionPerformedBtnModificar(ActionEvent e) {
-		String cod = LeerCampo(text_Codigo);
-		Matricula m = ObtenerMatricula();
-		if(cod.length() != 0) {
-			if (m != null) {
-				String codCurso = LeerCampo(text_CodCurso);
-				if (codCurso.length() != 0) {
-					if (ExisteCurso()) {
-						m.setCodCurso(codCurso);
-						AM.actualizarArchivo();
-						MostramosTabla();
-						Limpiar();
-					} else {					
-						Error("No existe curso", text_CodCurso);
-					}
-				} else {					
-					Error("El campo Codigo curso no puede estar vacio", text_CodCurso);
-				}
-			} else {				
-				Error("El codigo no existe", text_Codigo);
-			}
+	private void actualizarMatricula() {
+		String numMatr = text_Codigo.getText();
+		String codCurso = text_CodCurso.getText();
+		
+		int ok = gMatricula.actualizar(numMatr, codCurso);
+    	
+		if (ok == 0) {
+			mensajeError("Error al actualizar");
 		} else {
-			Error("El campo de la Matricula no puede estar vacio", text_Codigo);
+			mensajeExitoso("Matricula actualizada");
+			MostramosTabla();
 		}
 	}
 	
-		//	Metodo Solo Numeros
-	void SoloNumeros (KeyEvent e) {
-		char caracter = e.getKeyChar();
-		if (!(Character.isDigit(caracter))) {
-			getToolkit();
-			e.consume();
-		}
+	// mostrar datos de tabla seleccionada
+	protected void mouseClickedTable(MouseEvent e) {
+		String nMatri, cAlumno, cCurso, fecha, hora;
+		int fila;
+
+		fila = table.getSelectedRow();
+		
+		nMatri = table.getValueAt(fila, 0).toString();
+		cAlumno = table.getValueAt(fila, 1).toString();
+		cCurso = table.getValueAt(fila, 2).toString();
+		fecha = table.getValueAt(fila, 3).toString();
+		hora = table.getValueAt(fila, 4).toString();
+		
+		text_Codigo.setText(nMatri);
+		text_CodAlumno.setText(cAlumno);
+		text_CodCurso.setText(cCurso);
+		text_Fecha.setText(fecha);
+		text_Hora.setText(hora);
 	}
 	
-		//	Metodo Solo Letras
-	void SoloLetras (KeyEvent e) {
-		char caracter = e.getKeyChar();
-		if (!(Character.isLetter(caracter) || caracter == e.VK_SPACE)) {
-			getToolkit();
-			e.consume();
-		}
-	}
-		//	No caracteres especiales
-	void NoEspeciales (KeyEvent e) {
-		char caracter = e.getKeyChar();
-		if (!(Character.isLetter(caracter) || Character.isDigit(caracter))) {
-			getToolkit();
-			e.consume();
-		}
+	private void mensajeError(String msj) {
+		JOptionPane.showMessageDialog(this, msj, "Error", 0);
 	}
 	
-		//	Metodo para no exceder los digitos
-	void BorrandoDigitos (KeyEvent e,int field) {
-		switch (field) {
-			case 1:
-				if(text_Codigo.getText().length() >= 7)
-					e.consume();
-						break;
-			case 2: 
-				if(text_CodAlumno.getText().length() >= 9)
-			        e.consume();
-						break;
-			case 3: 
-				if(text_CodCurso.getText().length() >= 6)
-			        e.consume();
-						break;
-		}
+	private void mensajeExitoso(String msj) {
+		JOptionPane.showMessageDialog(this, msj, "Registro bien", 1);
 	}
 	
-		//	Validando Numero Matricula  	
+	//	Validando Numero Matricula  	
 	protected void keyTypedText_Codigo(KeyEvent e) {
-		NoEspeciales(e);
-		BorrandoDigitos(e, 1);
+		
 	}
 	
 		//	Validando Codigo de Alumno
 	protected void keyTypedText_CodAlumno(KeyEvent e) {
-		NoEspeciales(e);
-		BorrandoDigitos(e, 2);
+		
 	}
 	
 		//	Validando Codigo de Curso
 	protected void keyTypedText_CodCurso(KeyEvent e) {
-		NoEspeciales(e);
-		BorrandoDigitos(e, 3);
+		
 	}
 }

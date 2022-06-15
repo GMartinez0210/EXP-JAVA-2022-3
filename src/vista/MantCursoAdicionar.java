@@ -92,6 +92,7 @@ public class MantCursoAdicionar extends JInternalFrame {
 		}
 		{
 			text_Codigo = new JTextField();
+			text_Codigo.setEditable(false);
 			text_Codigo.setColumns(10);
 			text_Codigo.setBounds(125, 112, 140, 19);
 			getContentPane().add(text_Codigo);

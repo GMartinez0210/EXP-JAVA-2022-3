@@ -5,15 +5,14 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class MySQLConexion8 {
-	@SuppressWarnings("deprecation")
 	public static Connection getConexion() {
-		Connection con = null;
+		Connection connection = null;
 		try {
-			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+			Class.forName("com.mysql.cj.jdbc.Driver");
 			String url = "jdbc:mysql://localhost:3306/james_school?useSSL=false&useTimezone=true&serverTimezone=UTC";
-			String usr = "root";
-			String psw = "root";
-			con = DriverManager.getConnection(url, usr, psw);
+			String user = "root";
+			String password = "root";
+			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
 			System.out.println("Error >> Driver no Instalado!!" + e.getMessage());
 		} catch (SQLException e) {
@@ -21,7 +20,7 @@ public class MySQLConexion8 {
 		} catch (Exception e) {
 			System.out.println("Error >> general : " + e.getMessage());
 		} 
-		return con;
+		return connection;
 	}
 
 }

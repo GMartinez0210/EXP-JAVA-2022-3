@@ -18,4 +18,6 @@ public interface AlumnoDAO {
 	public Alumno listarAlumno(String codAlumno);
 	
 	public Alumno listarAlumnoDni(String dni);
+
+	public int obtenerEstado(String codAlumno);
 }

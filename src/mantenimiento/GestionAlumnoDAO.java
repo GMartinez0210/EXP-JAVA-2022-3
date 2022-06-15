@@ -7,10 +7,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import entidad.Alumno;
+import interfaces.AlumnoDAO;
 import util.MySQLConexion8;
 
-public class GestionAlumnoDAO {
 
+public class GestionAlumnoDAO implements AlumnoDAO {
+
+	@Override
 	public int registrar(Alumno a) {
 		int res = 0;
 		Connection con = null;
@@ -42,6 +45,7 @@ public class GestionAlumnoDAO {
 		return res;
 	}
 
+	@Override
 	public int actualizar(Alumno a) {
 		int res = 0;
 		Connection con = null;
@@ -74,6 +78,7 @@ public class GestionAlumnoDAO {
 		return res;
 	}
 
+	@Override
 	public ArrayList<Alumno> listar() {
 		ArrayList<Alumno> lista = new ArrayList<Alumno>();
 		Alumno a;
@@ -112,6 +117,7 @@ public class GestionAlumnoDAO {
 		return lista ;
 	}
 	
+	@Override
 	public int eliminar(Alumno a) {
 		int res = 0;
 		Connection con = null;
@@ -140,6 +146,7 @@ public class GestionAlumnoDAO {
 		return res;
 	}
 	
+	@Override
     public String leerCodigoAlumno() {
 
         String codigoAlumno = null;
@@ -174,6 +181,7 @@ public class GestionAlumnoDAO {
         return  "A"+codAlumno;
     }
 
+	@Override
     public Alumno listarAlumno(String codAlumno){
         Alumno alumno = null;
         Connection con = null;
@@ -209,6 +217,7 @@ public class GestionAlumnoDAO {
         return alumno;
     }
 
+	@Override
     public Alumno listarAlumnoDni(String dni){
         Alumno alumno = null;
         Connection con = null;
@@ -243,4 +252,38 @@ public class GestionAlumnoDAO {
         }
         return alumno;
     }
+
+	@Override
+	public int obtenerEstado(String codAlumno) {
+		int estadoAlumno = 0;
+		
+		Connection con = null;
+        PreparedStatement pstm = null;
+        ResultSet res = null;
+        
+        try {
+            con = MySQLConexion8.getConexion();
+            String sql = "{call usp_obtenerEstadoAlumno(?)}";
+            pstm = con.prepareStatement(sql);
+            pstm.setString(1, codAlumno);
+            res = pstm.executeQuery();
+            
+            while(res.next()) {            	
+            	estadoAlumno = res.getInt(1);
+            }
+        } catch (Exception e) {
+            System.out.println(">>>>>>>>>>>> Error en la Instrucción SQL - Consultar" + e.getMessage());
+        }finally {
+            try {
+                if(pstm != null ) pstm.close();
+                if(res != null) res.close();
+                if(con != null) con.close();
+
+            } catch (SQLException e2) {
+                System.out.println("<<<< Error al cerrar la base de datos "+ e2.getMessage());
+            }
+        }
+		
+		return estadoAlumno;
+	}
 }

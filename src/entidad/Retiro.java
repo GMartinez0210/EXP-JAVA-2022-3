@@ -3,7 +3,20 @@ package entidad;
 public class Retiro {
 	private int idRetiro;
 	private String numRetiro, numMatricula, fecha, hora;
+	private String codAlumno, codCurso;
 	
+	public Retiro(int idRetiro, String numRetiro, String numMatricula, String fecha, String hora, String codAlumno,
+			String codCurso) {
+		super();
+		this.idRetiro = idRetiro;
+		this.numRetiro = numRetiro;
+		this.numMatricula = numMatricula;
+		this.fecha = fecha;
+		this.hora = hora;
+		this.codAlumno = codAlumno;
+		this.codCurso = codCurso;
+	}
+
 	public Retiro(String numRetiro, String numMatricula, String fecha, String hora) {
 		this.numRetiro = numRetiro;
 		this.numMatricula = numMatricula;
@@ -12,7 +25,6 @@ public class Retiro {
 	}
 	
 	public Retiro() {
-		
 	}
 	
 	public void setIdRetiro (int idRetiro) {
@@ -53,5 +65,21 @@ public class Retiro {
 	
 	public String getHora () {
 		return hora;
+	}
+
+	public String getCodAlumno() {
+		return codAlumno;
+	}
+
+	public void setCodAlumno(String codAlumno) {
+		this.codAlumno = codAlumno;
+	}
+
+	public String getCodCurso() {
+		return codCurso;
+	}
+
+	public void setCodCurso(String codCurso) {
+		this.codCurso = codCurso;
 	}
 }

@@ -1,0 +1,22 @@
+<<<<<<< Updated upstream
+<<<<<<< HEAD
+/.classpath
+/.project
+/arrays/
+/entidad/
+/imagenes/
+/interfaces/
+/mantenimiento/
+/util/
+/vista/
+=======
+/vista/
+/util/
+/mantenimiento/
+/arrays/
+/interfaces/
+/entidad/
+>>>>>>> c9a546271c0f6a047849a6e065291e00ea98320c
+=======
+/vista/
+>>>>>>> Stashed changes
