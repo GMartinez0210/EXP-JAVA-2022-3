@@ -5,15 +5,12 @@ import java.util.ArrayList;
 import entidad.Alumno;
 
 public interface AlumnoDAO {
-	public int registrar(Alumno alumno);
+	public int registrar(Alumno a);
 	
-	public int actualizar(Alumno alumno);
+	public int actualizar(Alumno a);
 	
-	public ArrayList<Alumno> leer();
+	public ArrayList<Alumno> listar();
 
-<<<<<<< Updated upstream
-	public int eliminar(Alumno alumno);
-=======
 	public int eliminar(Alumno a);
 	
 	public String leerCodigoAlumno();
@@ -21,10 +18,4 @@ public interface AlumnoDAO {
 	public Alumno listarAlumno(String codAlumno);
 	
 	public Alumno listarAlumnoDni(String dni);
-	
-	public int obtenerEstado(String codAlumno);
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 }

@@ -13,9 +13,12 @@ import arrays.ArrayAlumno;
 import arrays.ArrayCurso;
 import arrays.ArrayMatricula;
 import arrays.ArrayRetiro;
+
 import entidad.Curso;
 import entidad.Matricula;
 import entidad.Retiro;
+
+import mantenimiento.GestionRetiroDAO;
 
 import javax.swing.JScrollPane;
 import javax.swing.JRadioButton;
@@ -29,7 +32,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 
 public class RegistroRetiroMod extends JInternalFrame {
-	ButtonGroup grupo = new ButtonGroup();
 	private JTable table;
 	private JScrollPane scrollPane;
 	private JRadioButton rdbtn_Consultar;
@@ -52,10 +54,17 @@ public class RegistroRetiroMod extends JInternalFrame {
 	private JTextField text_Curso;
 	private JLabel lblNewLabel_5;
 
+		// Button Groups
+	ButtonGroup group = new ButtonGroup();
+	
+		// ArrayList
 	ArrayMatricula AM = new ArrayMatricula();
 	ArrayAlumno AA = new ArrayAlumno();
 	ArrayCurso AC = new ArrayCurso();
 	ArrayRetiro AR = new ArrayRetiro(); 
+	
+		// GestionDAO
+	GestionRetiroDAO gRetiro = new GestionRetiroDAO();
 	
 	/**
 	 * Launch the application.
@@ -87,14 +96,6 @@ public class RegistroRetiroMod extends JInternalFrame {
 		setBounds(100, 100, 620, 600);
 		getContentPane().setLayout(null);
 		
-		scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 266, 588, 295);
-		getContentPane().add(scrollPane);
-		
-		table = new JTable();
-		table.setFillsViewportHeight(true);
-		scrollPane.setViewportView(table);
-		
 		rdbtn_Consultar = new JRadioButton("Consultar");
 		rdbtn_Consultar.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		rdbtn_Consultar.addActionListener(new ActionListener() {
@@ -124,9 +125,9 @@ public class RegistroRetiroMod extends JInternalFrame {
 		});
 		rdbtn_Eliminar.setBounds(261, 38, 90, 21);
 		getContentPane().add(rdbtn_Eliminar);
-		grupo.add(rdbtn_Consultar);
-		grupo.add(rdbtn_Eliminar);
-		grupo.add(rdbtn_Modificar);
+		group.add(rdbtn_Consultar);
+		group.add(rdbtn_Eliminar);
+		group.add(rdbtn_Modificar);
 
 		
 		
@@ -140,7 +141,6 @@ public class RegistroRetiroMod extends JInternalFrame {
 		modelo.addColumn("Cod. Curso");
 		modelo.addColumn("Fecha");
 		modelo.addColumn("Hora");
-		table.setModel(modelo);
 		MostramosTabla();
 		
 		btn_Limpiar = new JButton("");
@@ -267,6 +267,15 @@ public class RegistroRetiroMod extends JInternalFrame {
 		lblNewLabel_5.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblNewLabel_5.setBounds(261, 191, 112, 13);
 		getContentPane().add(lblNewLabel_5);
+		
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 266, 588, 260);
+		getContentPane().add(scrollPane);
+		
+		table = new JTable();
+		table.setFillsViewportHeight(true);
+		scrollPane.setViewportView(table);
+		table.setModel(modelo);
 		MostramosTabla();
 	}
 	
@@ -405,7 +414,7 @@ public class RegistroRetiroMod extends JInternalFrame {
 	
 	//Boton Eliminar
 	protected void actionPerformedBtnNewButton_1(ActionEvent e) {
-		String num = LeerString(text_Retiro);
+		/*String num = LeerString(text_Retiro);
 		Retiro ret = getRetiro();
 		if(num.length() != 0) {
 			if(ret != null){
@@ -417,7 +426,28 @@ public class RegistroRetiroMod extends JInternalFrame {
 				NoExiste("Número de Retiro", text_Retiro);
 			}
 		}
-		else{
+		else {
+			Error("N° Retiro", text_Retiro);
+		}*/
+		
+		String numRetiro = LeerString(text_Retiro);
+		if(numRetiro.length() != 0) {
+			Retiro retiro = gRetiro.leer(numRetiro);
+			if(retiro != null){
+				int confirmacion = JOptionPane.showConfirmDialog(this, "¿Desea eliminar el Retiro?", "James School", JOptionPane.YES_NO_OPTION);
+				
+				if (confirmacion == 0) {
+					
+				}
+				
+				MostramosTabla();
+				Limpiar();
+			}
+			else {
+				NoExiste("Número de Retiro", text_Retiro);
+			}
+		}
+		else {
 			Error("N° Retiro", text_Retiro);
 		}
 	}
@@ -432,7 +462,7 @@ public class RegistroRetiroMod extends JInternalFrame {
 	
 	//Boton Consultar
 	protected void actionPerformedBtn_Consultar(ActionEvent e) {
-		String Retiro = LeerString(text_Retiro);
+		/*String Retiro = LeerString(text_Retiro);
 		if(Retiro.length() != 0) {
 			if(AR.buscar(Retiro) != null) {
 				text_Matricula.setText(AR.buscar(Retiro).getNumMatricula());
@@ -442,6 +472,27 @@ public class RegistroRetiroMod extends JInternalFrame {
 					text_Alumno.setText(AM.buscar(Matricula).getCodAlumno());
 					text_Fecha.setText(AR.buscar(Retiro).getFecha());
 					text_Hora.setText(AR.buscar(Retiro).getHora());
+				}
+			}
+			else {
+				NoExiste("N° MATRICULA", text_Matricula);
+			}
+		}
+		else {
+			Error("MATRICULA", text_Retiro);
+		}*/
+		
+		String codRetiro = LeerString(text_Retiro);
+		if(codRetiro.length() != 0) {
+			if(gRetiro.leer(codRetiro) != null) {
+				Retiro retiro = new Retiro();
+				String matricula = retiro.getNumMatricula();
+				text_Matricula.setText(retiro.getNumMatricula());
+				if(matricula.length() != 0) {
+					text_Curso.setText(AM.buscar(matricula).getCodCurso());
+					text_Alumno.setText(AM.buscar(matricula).getCodAlumno());
+					text_Fecha.setText(retiro.getFecha());
+					text_Hora.setText(retiro.getHora());
 				}
 			}
 			else {
@@ -466,8 +517,6 @@ public class RegistroRetiroMod extends JInternalFrame {
 				AM.actualizarArchivo();
 				MostramosTabla();
 			}
-		}
-		else {
 		}
 	}
 }

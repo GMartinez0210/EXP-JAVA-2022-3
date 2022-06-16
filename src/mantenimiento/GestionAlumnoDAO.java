@@ -1,44 +1,144 @@
 package mantenimiento;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import entidad.Alumno;
-import interfaces.AlumnoDAO;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
 import util.MySQLConexion8;
->>>>>>> Stashed changes
 
-public class GestionAlumnoDAO implements AlumnoDAO {
+public class GestionAlumnoDAO {
 
-	@Override
-	public int registrar(Alumno alumno) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int registrar(Alumno a) {
+		int res = 0;
+		Connection con = null;
+		PreparedStatement pstm =null;
+		try {
+			con = MySQLConexion8.getConexion();
+			String sql = "insert into james_school.alumno values (null,?,?,?,?,?,?,?);";
+			pstm = con.prepareStatement(sql);
+			pstm.setString(1, a.getCodAlumno());
+			pstm.setString(2, a.getNombres());
+			pstm.setString(3, a.getApellidos());
+			pstm.setString(4, a.getDni());
+			pstm.setInt(5, a.getEdad());
+			pstm.setInt(6, a.getCelular());
+			pstm.setInt(7, a.getEstado());
+			
+			res =pstm.executeUpdate();
+			
+		} catch (Exception e) {
+			System.out.println(">>>>>>>>>>Error en la instruccion SQL - Registrar" + e.getMessage());
+		}finally {
+			try {
+				if(pstm != null)pstm.close();
+				if(con != null)pstm.close();
+			} catch (SQLException e2) {
+				System.out.println(">>>>>>>>>>Error al cerrar la base de da datos" + e2.getMessage());
+			}
+		}
+		return res;
 	}
 
-	@Override
-	public int actualizar(Alumno alumno) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int actualizar(Alumno a) {
+		int res = 0;
+		Connection con = null;
+		PreparedStatement pstm = null;
+		try {
+			con = MySQLConexion8.getConexion();
+			String sql = "update alumno set nombreAlumno = ?, apellidoAlumno = ?, dniAlumno = ?, edadAlumno = ?, estadoAlumno = ? where codAlumno = ?;";
+			pstm = con.prepareStatement(sql);
+			
+			pstm.setString(1, a.getNombres());
+			pstm.setString(2, a.getApellidos());
+			pstm.setString(3, a.getDni());
+			pstm.setInt(4, a.getEdad());
+			pstm.setInt(5, a.getEstado());
+			pstm.setString(6, a.getCodAlumno());
+			
+			res = pstm.executeUpdate();
+			
+		} catch (Exception e) {
+			System.out.println(">>> ERROR en la instruccion SQL " + e.getMessage());
+		} finally {
+			try {
+				if (pstm != null) pstm.close();
+				if (con != null) con.close();
+				
+			} catch (Exception e2) {
+				System.out.println(">>> Error al cerrar la bd: " + e2.getMessage());
+			}
+		}
+		return res;
 	}
 
-	@Override
-	public ArrayList<Alumno> leer() {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<Alumno> listar() {
+		ArrayList<Alumno> lista = new ArrayList<Alumno>();
+		Alumno a;
+		Connection con = null;
+		PreparedStatement pstm = null;
+		ResultSet res = null;
+		try {
+			con = MySQLConexion8.getConexion();
+			String sql = "SELECT * FROM alumno";
+			pstm = con.prepareStatement(sql);
+			 res = pstm.executeQuery();
+			 while(res.next()) {
+				a = new Alumno();
+				a.setCodAlumno(res.getString(2));
+				a.setNombres(res.getString(3));
+				a.setApellidos(res.getString(4));
+				a.setDni(res.getString(5));
+				a.setEdad(res.getInt(6));
+				a.setCelular(res.getInt(7));
+				a.setEstado(res.getInt(8));
+				 
+				lista.add(a);
+			 }					
+		} catch (Exception e) {
+			System.out.println(">>>>>>>>>>>> Error en la Instrucción SQL - Consultar" + e.getMessage());
+		}finally {
+			try {
+				if(pstm != null ) pstm.close();
+				if(res != null) res.close();
+				if(con != null) con.close();
+				
+			} catch (SQLException e2) {
+				System.out.println("<<<< Error al cerrar la base de datos "+ e2.getMessage());
+			}
+		}	
+		return lista ;
 	}
 	
-	@Override
-	public int eliminar(Alumno alumno) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int eliminar(Alumno a) {
+		int res = 0;
+		Connection con = null;
+		PreparedStatement pstm = null;
+		try {
+			con = MySQLConexion8.getConexion();
+			String sql = "delete from james_school.alumno where codAlumno = ?;";
+			pstm = con.prepareStatement(sql);
+
+			pstm.setString(1, a.getCodAlumno());
+
+			res = pstm.executeUpdate();
+			
+		} catch (Exception e) {
+			System.out.println(">>> ERROR en la instruccion SQL " + e.getMessage());
+		} finally {
+			try {
+				if (pstm != null) pstm.close();
+				if (con != null) con.close();
+				
+			} catch (Exception e2) {
+				System.out.println(">>> Error al cerrar la bd: " + e2.getMessage());
+			}
+		}
+		
+		return res;
 	}
-<<<<<<< Updated upstream
-=======
 	
     public String leerCodigoAlumno() {
 
@@ -143,42 +243,4 @@ public class GestionAlumnoDAO implements AlumnoDAO {
         }
         return alumno;
     }
-
-	@Override
-	public int obtenerEstado(String codAlumno) {
-		int estadoAlumno = 0;
-		
-		Connection con = null;
-        PreparedStatement pstm = null;
-        ResultSet res = null;
-        
-        try {
-            con = MySQLConexion8.getConexion();
-            String sql = "{call usp_obtenerEstadoAlumno(?)}";
-            pstm = con.prepareStatement(sql);
-            pstm.setString(1, codAlumno);
-            res = pstm.executeQuery();
-            
-            while(res.next()) {            	
-            	estadoAlumno = res.getInt(1);
-            }
-        } catch (Exception e) {
-            System.out.println(">>>>>>>>>>>> Error en la Instrucción SQL - Consultar" + e.getMessage());
-        }finally {
-            try {
-                if(pstm != null ) pstm.close();
-                if(res != null) res.close();
-                if(con != null) con.close();
-
-            } catch (SQLException e2) {
-                System.out.println("<<<< Error al cerrar la base de datos "+ e2.getMessage());
-            }
-        }
-		
-		return estadoAlumno;
-	}
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 }

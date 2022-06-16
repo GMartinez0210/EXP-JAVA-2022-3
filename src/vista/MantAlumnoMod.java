@@ -18,17 +18,20 @@ import javax.swing.table.DefaultTableModel;
 
 import arrays.ArrayAlumno;
 import entidad.Alumno;
+import mantenimiento.GestionAlumnoDAO;
 
 import javax.swing.JButton;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyAdapter;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 
-
 public class MantAlumnoMod extends JInternalFrame{
 	
+	DefaultTableModel modelo = new DefaultTableModel();
+	GestionAlumnoDAO gAlum = new GestionAlumnoDAO();
 	ButtonGroup grupo = new ButtonGroup();
 	
 	private JLabel lblNewLabel;
@@ -39,8 +42,6 @@ public class MantAlumnoMod extends JInternalFrame{
 	private JLabel lblNewLabel_4;
 	private JTextField text_Codigo;
 	private JTextField text_DNI;
-	private JLabel lbl_Seccion;
-	private JTextField text_Seccion;
 	private JTable table;
 	private JLabel lbl_Nombre;
 	private JLabel lbl_Apellido;
@@ -52,16 +53,12 @@ public class MantAlumnoMod extends JInternalFrame{
 	private JTextField text_Celular;
 	private JButton btn_Procesar;
 	private JScrollPane scrollPane;
-	private DefaultTableModel modelo;
 	private JTextField text_Estado;
 	private JLabel lbl_Estado;
 
 		//	Variables globoterráqueo
-	/*	Waiting	*/
-		
-		//	Array globoterráqueo
-	ArrayAlumno AA = new ArrayAlumno();
-	
+		/*	Waiting	*/
+
 		//	Clase globoterráquea
 	
 	/**
@@ -170,24 +167,6 @@ public class MantAlumnoMod extends JInternalFrame{
 			getContentPane().add(text_DNI);
 		}
 		{
-			lbl_Seccion = new JLabel("Seccion");
-			lbl_Seccion.setFont(new Font("Tahoma", Font.PLAIN, 12));
-			lbl_Seccion.setBounds(353, 92, 69, 15);
-			getContentPane().add(lbl_Seccion);
-		}
-		{
-			text_Seccion = new JTextField();
-			text_Seccion.addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyTyped(KeyEvent e) {
-					keyTypedText_Seccion(e);
-				}
-			});
-			text_Seccion.setColumns(10);
-			text_Seccion.setBounds(433, 88, 140, 19);
-			getContentPane().add(text_Seccion);
-		}
-		{
 			scrollPane = new JScrollPane();
 			scrollPane.setBounds(40, 164, 534, 364);
 			getContentPane().add(scrollPane);
@@ -195,6 +174,16 @@ public class MantAlumnoMod extends JInternalFrame{
 				table = new JTable();
 				table.setFillsViewportHeight(true);
 				scrollPane.setViewportView(table);
+				// Mostramos el Default de la Tabla
+				modelo.addColumn("Código Alumno");
+				modelo.addColumn("Nombre");
+				modelo.addColumn("Apellido");
+				modelo.addColumn("DNI");
+				modelo.addColumn("Edad");
+				modelo.addColumn("Celular");
+				modelo.addColumn("Estado");
+				table.setModel(modelo);
+				MostramosTabla();
 			}
 		}
 		{
@@ -309,18 +298,6 @@ public class MantAlumnoMod extends JInternalFrame{
 			lbl_Estado.setBounds(353, 207, 69, 15);
 			getContentPane().add(lbl_Estado);
 		}
-		
-			// Mostramos el Default de la Tabla
-		modelo = new DefaultTableModel();
-		modelo.addColumn("Codigo");
-		modelo.addColumn("Nombre");
-		modelo.addColumn("Apellido");
-		modelo.addColumn("DNI");
-		modelo.addColumn("Seccion");
-		modelo.addColumn("Celular");
-		modelo.addColumn("Estado");
-		table.setModel(modelo);
-		MostramosTabla();
 	}
 	
 	//	Metodo Solo Numeros
@@ -339,8 +316,7 @@ public class MantAlumnoMod extends JInternalFrame{
 			getToolkit();
 			e.consume();
 		}
-	}
-	
+	}	
 	void NoEspeciales (KeyEvent e) {
 		char caracter = e.getKeyChar();
 		if (!(Character.isLetter(caracter) || Character.isDigit(caracter))) {
@@ -364,10 +340,6 @@ public class MantAlumnoMod extends JInternalFrame{
 				if(text_Celular.getText().length() >= 9)
 			        e.consume();
 						break;
-			case 5: 
-				if(text_Seccion.getText().length() >= 4)
-			        e.consume();
-						break;
 			case 7: 
 				if(text_Edad.getText().length() >= 2)
 			        e.consume();
@@ -379,51 +351,46 @@ public class MantAlumnoMod extends JInternalFrame{
 		}
 	}
 	
-		//	Validando Codigo
+	//	Validando Codigo
 	protected void keyTypedText_Codigo(KeyEvent e) {
 		BorrandoDigitos(e, 1);
 	}
 	
-		//	Validar DNI
+	//	Validar DNI
 	protected void keyTypedText_DNI(KeyEvent e) {
 		SoloNumeros(e);
 		BorrandoDigitos(e, 3);
 	}
 	
-		//	Validando Nombre
+	//	Validando Nombre
 	protected void keyTypedText_Nombre(KeyEvent e) {
 		SoloLetras(e);
 	}
 	
-		//	Validando Celular
+	//	Validando Celular
 	protected void keyTypedText_Celular(KeyEvent e) {
 		SoloNumeros(e);
 		BorrandoDigitos(e, 4);
 	}
 	
-		// 	Validando Apellido
+	// 	Validando Apellido
 	protected void keyTypedText_Apellido(KeyEvent e) {
 		SoloLetras(e);
 	}
 	
-		//	Validando Edad
+	//	Validando Edad
 	protected void keyTypedText_Edad(KeyEvent e) {
 		SoloNumeros(e);
 		BorrandoDigitos(e, 7);
 	}
 	
-		//	Validando Seccion
-	protected void keyTypedText_Seccion(KeyEvent e) {
-		BorrandoDigitos(e, 5);
-	}
-	
-		//	Validando Estado
+	//	Validando Estado
 	protected void keyTypedText_Estado(KeyEvent e) {
 		SoloNumeros(e);
 		BorrandoDigitos(e, 8);
 	}
 	
-		//	Metodos Ocultar Campos
+	//	Metodos Ocultar Campos
 	void OcultarCampos() {
 		text_Codigo.setEditable(true);
 		text_Nombre.setVisible(false); lbl_Nombre.setVisible(false);
@@ -432,7 +399,7 @@ public class MantAlumnoMod extends JInternalFrame{
 		text_Estado.setVisible(false); lbl_Estado.setVisible(false);
 	}
 	
-		//	Metodo Mostrar Campos
+	//	Metodo Mostrar Campos
 	void MostrarCampos() {
 		text_Codigo.setEditable(false);
 		text_Nombre.setVisible(true); lbl_Nombre.setVisible(true);
@@ -441,7 +408,7 @@ public class MantAlumnoMod extends JInternalFrame{
 		text_Estado.setVisible(true); lbl_Estado.setVisible(true);
 	}
 	
-		// No Editables
+	// No Editables
 	void NoEditables () {
 		text_Codigo.setEditable(false);
 		text_Nombre.setEditable(false);
@@ -450,10 +417,9 @@ public class MantAlumnoMod extends JInternalFrame{
 		text_Edad.setEditable(false);
 		text_Celular.setEditable(false);
 		text_Estado.setEditable(false);
-		text_Seccion.setEditable(false);
 	}
 	
-		// No Editables
+	// No Editables
 	void Editables () {
 		text_Codigo.setEditable(true);
 		text_Nombre.setEditable(true);
@@ -462,24 +428,23 @@ public class MantAlumnoMod extends JInternalFrame{
 		text_Edad.setEditable(true);
 		text_Celular.setEditable(true);
 		text_Estado.setEditable(true);
-		text_Seccion.setEditable(true);
 	}
 	
-		// Solo Consulta
+	// Solo Consulta
 	void SoloConsulta() {
 		scrollPane.setBounds(40, 248, 534, 280);
 		MostrarCampos();
 		NoEditables();
 	}
 	
-		//	Rdbtn Consultar
+	//	Rdbtn Consultar
 	protected void actionPerformedRdbtn_Consultar(ActionEvent e) {
 		btn_Procesar.setText("Consultar");
 		scrollPane.setBounds(40, 164, 534, 364);
 		OcultarCampos();
 	}
 	
-		//	Rdbtn Modificar
+	//	Rdbtn Modificar
 	protected void actionPerformedRdbtn_Modificar(ActionEvent e) {
 		btn_Procesar.setText("Modificar");
 		scrollPane.setBounds(40, 248, 534, 280);
@@ -488,40 +453,41 @@ public class MantAlumnoMod extends JInternalFrame{
 		MostrarCampos();
 	}
 	
-		//	Metodos Leer
+	//	Metodos Leer
 	String LeerString(JTextField text) {
 		return text.getText().trim().toString();
 	}
-	
 	int LeerEntero(JTextField text) {
 		return Integer.parseInt(text.getText().trim().toString());
 	}
 	
 		
-		//	Metodo Error
+	//	Metodo Error
 	void Error(String x, JTextField text) {
 		JOptionPane.showMessageDialog(this, "No rellenaste el campo: " + x, "ERROR", 0);
 		text.setText(x);
 		text.requestFocus();
 	}
 	
-		// Metodo No Existe
+	// Metodo No Existe
 	void NoExiste(String x) {
 		JOptionPane.showMessageDialog(this, "No existe el " + x + " ingresado", "ERROR", 0);
 	}
 	
-		// Metodo Mal Ingreso
+	// Metodo Mal Ingreso
 	void MalIngreso(String x, JTextField text) {
 		JOptionPane.showMessageDialog(this, "Ingresaste mal el " + x, "ERROR", 0);
 		text.requestFocus();
 	}
 	
-		//	Metodo No se Puede
+	//	Metodo No se Puede
 	void NoPuede() {
 		JOptionPane.showMessageDialog(this, "No se puede procesar su accion", "ERROR", 0);
 	}
 	
-		//	Metodo Limpiar
+	
+	
+	//	Metodo Limpiar
 	void Limpiar() {
 		text_Codigo.setText("");
 		text_Nombre.setText("");
@@ -532,190 +498,84 @@ public class MantAlumnoMod extends JInternalFrame{
 		text_Estado.setText("");
 	}
 	
-		//	Metodo Mostramos Tabla
+	//	Metodo Mostramos Tabla
 	void MostramosTabla() {
 		modelo.setRowCount(0);
-		for (int i  = 0; i < AA.tamanio(); i++) {
-			Object [] fila = {
-					AA.obtener(i).getCodAlumno(),
-					AA.obtener(i).getNombres(),
-					AA.obtener(i).getApellidos(),
-					AA.obtener(i).getDni(),
-					AA.obtener(i).getEdad(),
-					AA.obtener(i).getCelular(),
-					AA.obtener(i).getEstado(),
-			};
+		ArrayList<Alumno> data = gAlum.listar();
+		for (Alumno a : data) {
+			Object fila[] = {a.getCodAlumno(), a.getNombres(), 
+					a.getApellidos(), a.getDni(), a.getEdad(), a.getCelular(), a.getEstado()};
 			modelo.addRow(fila);
 		}
 	}
 	
-		// Metodo Modificamos
-	void Modificamos (String Nombre, String Apellido, String DNI, int Edad, int Celular, int Estado) {
-		String Codigo = LeerString(text_Codigo);
-		try {
-			Alumno alumno = AA.buscarCod(Codigo);
-				if (alumno != null) {
-					alumno.setNombres(Nombre);
-					alumno.setApellidos(Apellido);
-					alumno.setDni(DNI);
-					alumno.setEdad(Edad);
-					alumno.setCelular(Celular);
-					alumno.setEstado(Estado);
-					AA.actulizarArchivos();
-				}
-				else {
-					NoExiste("CODIGO");
-				}
-		}
-		catch (Exception e1) {
-			Error("CODIGO", text_Codigo);
-		}
-		MostramosTabla();
-		Limpiar();
-	}
-	
-		//	Metodo Modificar
-	void Modificar () {
-		JOptionPane.showMessageDialog(null, "Modificar is selected", "This is a title", 1);
+	// Metodo Modificamos
+	void Modificar() {
+		String codAlumno, nombres, apellidos, dni;
+		int edad, celular, estado;
 		
-		String Nombre = LeerString(text_Nombre);
-		if (Nombre.length() != 0) {
-			String Apellido = LeerString(text_Apellido);
-			if (Apellido.length() != 0) {
-				String DNI = LeerString(text_DNI);
-				if (DNI.length() != 0) {
-					try {
-						int Edad = LeerEntero(text_Edad);
-						if (Edad > 3) {
-							try {
-								int Celular = LeerEntero(text_Celular);
-								if (Celular > 90000000) {
-									try {
-										int Estado = LeerEntero(text_Estado);
-										if (Estado >= 0 && Estado <= 2) {
-											Modificamos(Nombre, Apellido, DNI, Edad, Celular, Estado);
-										}
-										else {
-											MalIngreso("ESTADO", text_Estado);
-										}
-									}
-									catch (Exception e1) {
-										Error("ESTADO", text_Estado);
-									}
-								}
-								else {
-									MalIngreso("CELULAR", text_Celular);
-								}
-							}
-							catch (Exception e1) {
-								Error("CELULAR", text_Celular);
-							}
-						}
-						else {
-							MalIngreso("EDAD", text_Edad);
-						}
-					}
-					catch (Exception e1) {
-						Error("EDAD", text_Edad);
-					}
-				}
-				else {
-					MalIngreso("DNI", text_DNI);
-				}
-			}
-			else {
-				MalIngreso("APELLIDO", text_Apellido);
-			}
-		}
-		else {
-			MalIngreso("NOMBRE", text_Nombre);
-		}
+		// entradas
+		codAlumno = LeerString(text_Codigo);
+		nombres = LeerString(text_Nombre);
+		apellidos = LeerString(text_Apellido);
+		dni = LeerString(text_DNI);
+		edad = LeerEntero(text_Edad);
+		estado = LeerEntero(text_Estado);
+		
+		// validar
+		if(codAlumno == null || nombres == null || apellidos == null || dni == null || edad == 0 || estado == -1) {
+			return;
+        } else {
+        	// procesos
+        	Alumno a = new Alumno();
+        	a.setCodAlumno(codAlumno);
+			a.setNombres(nombres);
+			a.setApellidos(apellidos);
+			a.setDni(dni);
+			a.setEdad(edad);
+			a.setEstado(estado);
+        	
+        	// Llamar al metodo a registar
+        	int ok = gAlum.actualizar(a);
+        	
+        	if (ok == 0) {
+        		mensajeError("Error en la actualización");
+        	}
+        	else {
+        		mensajeExitoso("Usuario Actualizado");
+        	}
+        }
 	}
 	
-		//	Metodo Consultar
-	void Consultar () {
-		JOptionPane.showMessageDialog(null, "Consultar is selected");
-		SoloConsulta();
-		String Codigo = LeerString(text_Codigo);
-		if (Codigo.length() != 0) {
-			Alumno alumno = AA.buscarCod(Codigo);
-			if (alumno != null) {
-				MostrarCampos();
-				text_Nombre.setText(alumno.getNombres());
-				text_Apellido.setText(alumno.getApellidos());
-				text_DNI.setText(alumno.getDni());
-				text_Edad.setText("" + alumno.getEdad());
-				text_Celular.setText("" + alumno.getCelular());
-				text_Estado.setText("" + alumno.getEstado());
-			}
-			else {
-				JOptionPane.showMessageDialog(this, "El CODIGO no existe", "ERROR", 0);
-			}
-		}
-		else {
-			String DNI = LeerString(text_DNI);
-			if (DNI.length() != 0) {
-				Alumno alumno = AA.buscarDNI(DNI);
-				if (alumno != null) {
-					MostrarCampos();
-					text_Codigo.setText(alumno.getCodAlumno());
-					text_Nombre.setText(alumno.getNombres());
-					text_Apellido.setText(alumno.getApellidos());
-					text_Edad.setText("" + alumno.getEdad());
-					text_Celular.setText("" + alumno.getCelular());
-					text_Estado.setText("" + alumno.getEstado());
-				}
-				else {
-					JOptionPane.showMessageDialog(this, "El DNI no existe", "ERROR", 0);
-				}
-			}
-			else {
-				JOptionPane.showMessageDialog(this, "Rellena el campo CODIGO o DNI para consultar", "ERROR", 0);
-			}
-		}
+	//	Metodo Consultar
+	void Consultar() {
+		String codAlumno, dni;
+        codAlumno = LeerString(text_Codigo);
+        dni = LeerString(text_DNI);
+        modelo.setRowCount(0);
+        if(codAlumno.length() == 0 && dni.length() == 0) {
+        	return;
+        }else if(codAlumno.length() == 0) {
+        	 Alumno alumno = gAlum.listarAlumnoDni(dni);
+        	 System.out.println(alumno.getCodAlumno());
+             text_Codigo.setText(alumno.getCodAlumno());
+             text_Nombre.setText(""+ alumno.getNombres());
+             text_Apellido.setText(""+ alumno.getApellidos());
+             text_DNI.setText(""+ alumno.getDni());
+             text_Edad.setText(""+ alumno.getEdad());
+             text_Estado.setText(""+ alumno.getEstado());
+        }else {
+        	Alumno alumno = gAlum.listarAlumno(codAlumno);
+            text_Codigo.setText(alumno.getCodAlumno());
+            text_Nombre.setText(""+ alumno.getNombres());
+            text_Apellido.setText(""+ alumno.getApellidos());
+            text_DNI.setText(""+ alumno.getDni());
+            text_Edad.setText(""+ alumno.getEdad());
+            text_Estado.setText(""+ alumno.getEstado());
+        }
 	}
-	
-		//	Metodo Eliminar
-	void Eliminar() {
-		String Codigo = LeerString(text_Codigo);
-		Alumno alumno = AA.buscarCod(Codigo);
-		if (alumno != null) {
-			AA.eliminar(alumno);
-			MostramosTabla();
-			Limpiar();
-		}
-		else {
-			NoExiste("CODIGO");
-		}
-	}
-	
-		//	Metodo Procesar Codigo Eliminar
-	void ProcesarCodigoEliminar(String Codigo) {
-		if (AA.buscarCod(Codigo).getEstado() == 0) {
-			int answer = JOptionPane.showConfirmDialog(this, "¿Desea eliminar al alumno con Codigo: " + Codigo + "?", "CONFIRMACION", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-			if (answer == JOptionPane.YES_OPTION) {
-				Eliminar();
-			}
-		}
-		else {
-			NoPuede();
-		}
-	}
-	
-		//	Metodo Procesar DNI Eliminar
-	void ProcesarDNIEliminar(String DNI) {
-		if (AA.buscarDNI(DNI).getEstado() == 0) {
-			int answer = JOptionPane.showConfirmDialog(this, "¿Desea eliminar al alumno con DNI: " + DNI + "?", "CONFIRMACION", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-			if (answer == JOptionPane.YES_OPTION) {
-				Eliminar();
-			}
-		}
-		else {
-			NoPuede();
-		}
-	}
-	
-		// 	Btn Procesar
+
+	// 	Btn Procesar
 	protected void actionPerformedBtn_Procesar(ActionEvent e) {
 		if (rdbtn_Consultar.isSelected()) {
 			Consultar();
@@ -723,19 +583,60 @@ public class MantAlumnoMod extends JInternalFrame{
 		else {
 			Modificar();
 		}
+		MostramosTabla();
 	}
 	
-		// Btn Eliminar
+	// Obtiene Código
+	String getCodigo() {
+    	String cod = null;
+    	if (text_Codigo.getText().trim().length() == 0) {
+    		mensajeError("Ingrese el codigo");
+    	}
+    	else {
+    		try {
+    			cod = text_Codigo.getText();
+    		}
+    		catch (Exception e) {
+    			mensajeError("Ingrese un código numérico");
+    		}
+    	}
+    	return cod;
+    
+	}
+	
+	// Btn Eliminar
 	protected void actionPerformedBtn_Eliminar(ActionEvent e) {
-		String Codigo = LeerString(text_Codigo);
-		if (Codigo.length() != 0) {
-			ProcesarCodigoEliminar(Codigo);
-		}
-		else {
-			String DNI = LeerString(text_DNI);
-			if (DNI.length() != 0) {
-				ProcesarDNIEliminar(DNI);
+			String codAlumno;
+			codAlumno = getCodigo();
+		
+			if (codAlumno == null) {
+				mensajeError("Error");
+			}else {
+				// confirmación
+				int confirmacion = JOptionPane.showConfirmDialog(null, "¿Eliminar Usuario?", "Sistema", JOptionPane.YES_NO_OPTION);
+				if (confirmacion == 0) {
+					Alumno a = new Alumno();
+            	
+					a.setCodAlumno(codAlumno);        	
+
+					int ok = gAlum.eliminar(a);
+            	
+					if (ok == 0) {
+						mensajeError("Error en la eliminacion");
+					}else {
+						mensajeExitoso("Usuario eliminado");
+					}
+				}else {
+					mensajeExitoso("Cancelación exitosa");
+				}
+        	
 			}
-		}
+	}
+	
+	private void mensajeExitoso(String msj) {
+		 JOptionPane.showMessageDialog(this, msj, "Registro bien", 1);
+	}
+	private void mensajeError(String msj) {
+		  JOptionPane.showMessageDialog(this, msj, "Error", 0);
 	}
 }
