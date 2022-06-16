@@ -19,6 +19,8 @@ import entidad.Alumno;
 import entidad.Curso;
 import entidad.Matricula;
 import entidad.Retiro;
+import mantenimiento.GestionMatriculaDAO;
+import mantenimiento.GestionRetiroDAO;
 
 import javax.swing.JScrollPane;
 import javax.swing.ButtonGroup;
@@ -27,6 +29,7 @@ import javax.swing.JTable;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.JRadioButton;
 import java.awt.event.KeyAdapter;
@@ -50,22 +53,28 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 	private JScrollPane scrollPane;
 	private JButton btn_Procesar;
 	private JTable table;
-	private DefaultTableModel modelo;
+	private DefaultTableModel model;
 	private JTextField text_Estado;
 	private JTextField text_Alumno;
 	private JLabel lblCodAlum;
 	private JLabel lblNewLabel_7;
 	private JRadioButton rdbtn_Consultar;
 	private JRadioButton rdbtn_Adicionar;
+	private JTextField text_Retiro;
 	
+		// Button Group
 	ButtonGroup grupo = new ButtonGroup();
 
+		// GestionDAO
+	GestionMatriculaDAO gMatricula = new GestionMatriculaDAO();
+	GestionRetiroDAO gRetiro = new GestionRetiroDAO();
+	
 		//	Arrays Globoterraqueos
 	ArrayMatricula AM = new ArrayMatricula();
 	ArrayAlumno AA = new ArrayAlumno();
 	ArrayCurso AC = new ArrayCurso();
 	ArrayRetiro AR = new ArrayRetiro();
-	private JTextField text_Retiro;
+
 	
 	/**
 	 * Launch the application.
@@ -273,20 +282,22 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 		grupo.add(rdbtn_Consultar);
 		
 			//	Mostramos la tabla
-		modelo = new DefaultTableModel();
-		modelo.addColumn("Num. Retiro");
-		modelo.addColumn("Num. Matricula");
-		modelo.addColumn("Cod. Alumno");
-		modelo.addColumn("Cod. Curso");
-		modelo.addColumn("Fecha");
-		modelo.addColumn("Hora");
-		table.setModel(modelo);
+		model = new DefaultTableModel();
+		model.addColumn("Num. Retiro");
+		model.addColumn("Num. Matricula");
+		model.addColumn("Cod. Alumno");
+		model.addColumn("Cod. Curso");
+		model.addColumn("Fecha");
+		model.addColumn("Hora");
+		table.setModel(model);
 		MostramosTabla();
 	}
 	
 		//	Metodo Leer String
 	String LeerString(JTextField text) {
-		return text.getText().trim().toString();
+		String string = text.getText().trim().toString();
+		if(string.length() == 0) return string = null;
+		return string;
 	}
 	
 		//	Metodo Leer Entero
@@ -294,7 +305,16 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 		return Integer.parseInt(text.getText().trim().toString());
 	}
 	
+	//	Metodo Exito
+	void Exito(String x) {
+		JOptionPane.showMessageDialog(this, x, "James School", 1);
+	}
+	
 		//	Metodo Error
+	void Error(String x) {
+		JOptionPane.showMessageDialog(this, x, "ERROR", 0);
+	}
+	
 	void Error(String x, JTextField text) {
 		JOptionPane.showMessageDialog(this, "No relleno el campo " + x, "ERROR", 0);
 		text.setText("");
@@ -314,17 +334,19 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 	
 		// Metodo Mostramos Tabla
 	void MostramosTabla() {
-		modelo.setRowCount(0);
-		for (int i = 0; i < AR.tamanio(); i++) {
-			Object [] fila = {
-					AR.obtener(i).getNumRetiro(),
-					AR.obtener(i).getNumMatricula(),
-					AM.buscar(AR.obtener(i).getNumMatricula()).getCodAlumno(),
-					AM.buscar(AR.obtener(i).getNumMatricula()).getCodCurso(),
-					AR.obtener(i).getFecha(),
-					AR.obtener(i).getHora()
+		model.setRowCount(0);
+		
+		ArrayList<Retiro> retiros = gRetiro.leer();
+		for (Retiro retiro : retiros) {
+			Object [] row = {
+					retiro.getNumRetiro(),
+					retiro.getNumMatricula(),
+					retiro.getCodAlumno(),
+					retiro.getCodCurso(),
+					retiro.getFecha(),
+					retiro.getHora()
 			};
-			modelo.addRow(fila);
+			model.addRow(row);
 		}
 	}
 
@@ -351,34 +373,14 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 	
 		//	Metodo Limpiar
 	void Limpiar() {
-		text_Retiro.setText(AR.codigoCorrelativo());
+		text_Retiro.setText(gRetiro.generarCodigo());
 		text_Matricula.setText("");
 		text_Alumno.setText("");
 		text_Curso.setText("");
 		text_Nombre.setText("");
-		text_Fecha.setText("");
-		text_Hora.setText("");
+		text_Fecha.setText(Fecha());
+		text_Hora.setText(Hora());
 		text_Estado.setText("");
-	}
-
-		//	Metodo ConsultarMatricula
-	void ConsultarMatricula(String Matricula) {
-		if (Matricula.length() != 0) {
-			if (AM.buscar(Matricula) != null) {
-				text_Alumno.setText(AM.buscar(Matricula).getCodAlumno());
-				text_Curso.setText(AM.buscar(Matricula).getCodCurso());
-				text_Fecha.setText(Fecha());
-				text_Hora.setText(Hora());
-				text_Nombre.setText(AA.buscarCod(AM.buscar(Matricula).getCodAlumno()).getNombres());
-				text_Estado.setText(AA.buscarCod(AM.buscar(Matricula).getCodAlumno()).getEstado() + "");
-			}
-			else {
-				NoExiste("MATRICULA", text_Matricula);
-			}
-		}
-		else {
-			Error("MATRICULA", text_Matricula);
-		}
 	}
 	
 		//	Metodo Adicionamos Retiro
@@ -414,14 +416,55 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 		//	Btn Procesar
 	protected void actionPerformedBtn_Adicionar(ActionEvent e) {
 		if (rdbtn_Consultar.isSelected()) {
-			String Matricula = LeerString(text_Matricula);
-			ConsultarMatricula(Matricula);
+			String numMatricula = LeerString(text_Matricula);
+			if(numMatricula.length() == 0) {
+				Error("MATRICULA", text_Matricula);
+				return;
+			}
+			
+			Matricula matricula = gMatricula.leer(numMatricula);
+			if (matricula == null) {
+				Error("ERROR EN EL RETIRO");
+				return;
+			}
+			
+			text_Matricula.setText(matricula.getNumMatricula());
+			text_Alumno.setText(matricula.getCodAlumno());
+			text_Curso.setText(matricula.getCodCurso());
+			text_Fecha.setText(matricula.getFecha());
+			text_Hora.setText(matricula.getHora());
+			text_Estado.setText("" + matricula.getEstado());
+			text_Nombre.setText(matricula.getNombre());
 		}
 		else {
-			String Matricula = LeerString(text_Matricula);
-			Retiro(Matricula);
+			String numRetiro = LeerString(text_Retiro);
+			String numMatricula = LeerString(text_Matricula);
+			String fecha = Fecha();
+			String hora = Hora();
+			
+			if (numRetiro == null 
+				|| numMatricula == null
+				|| fecha == null
+				|| hora == null) {
+				return;
+			}
+			
+			Retiro retiro = new Retiro();
+			retiro.setNumRetiro(numRetiro);
+			retiro.setNumMatricula(numMatricula);
+			retiro.setFecha(fecha);
+			retiro.setHora(hora);
+			int addicionar = gRetiro.registrar(retiro);
+			
+			if (addicionar == 0) {
+				Error("NO SE PUDO ADICIONAR");
+				return;
+			}
+			
+			Exito("REGISTRO EXITOSO");
 		}
 		
+		MostramosTabla();
 	}
 	
 		//	Metodo Solo Numeros

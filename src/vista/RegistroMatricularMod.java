@@ -34,7 +34,6 @@ public class RegistroMatricularMod extends JInternalFrame {
 	private JLabel lblAccion;
 	private JRadioButton rdbtn_Modificar;
 	private JRadioButton rdbtn_Consultar;
-	private JRadioButton rdbtn_Eliminar;
 	private DefaultTableModel modelo;
 	ButtonGroup btnsGrupo = new ButtonGroup();
 	private JLabel lblNewLabel;
@@ -50,7 +49,6 @@ public class RegistroMatricularMod extends JInternalFrame {
 	private JButton btnLimpiar;
 	private JButton btnEliminar;
 	private JButton btnConsultar;
-	private JButton btnModificar;
 	
 	DefaultTableModel model = new DefaultTableModel();
 
@@ -131,18 +129,6 @@ public class RegistroMatricularMod extends JInternalFrame {
 			rdbtn_Consultar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 			rdbtn_Consultar.setBounds(172, 33, 103, 21);
 			getContentPane().add(rdbtn_Consultar);
-		}
-		{
-			rdbtn_Eliminar = new JRadioButton("Eliminar");
-			rdbtn_Eliminar.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					actionPerformedRdbtn_Eliminar(e);
-				}
-			});
-			btnsGrupo.add(rdbtn_Eliminar);
-			rdbtn_Eliminar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-			rdbtn_Eliminar.setBounds(444, 32, 109, 23);
-			getContentPane().add(rdbtn_Eliminar);
 		}
 		{
 			lblNewLabel = new JLabel("Num. Matricula");
@@ -234,7 +220,7 @@ public class RegistroMatricularMod extends JInternalFrame {
 					actionPerformedBtnLimpiar(e);
 				}
 			});
-			btnLimpiar.setBounds(429, 143, 89, 23);
+			btnLimpiar.setBounds(488, 188, 89, 23);
 			getContentPane().add(btnLimpiar);
 		}
 		{
@@ -244,7 +230,7 @@ public class RegistroMatricularMod extends JInternalFrame {
 					actionPerformedBtnEliminar(e);
 				}
 			});
-			btnEliminar.setBounds(444, 188, 89, 23);
+			btnEliminar.setBounds(488, 37, 89, 23);
 			getContentPane().add(btnEliminar);
 		}
 		{
@@ -254,18 +240,8 @@ public class RegistroMatricularMod extends JInternalFrame {
 					actionPerformedBtnConsultar(e);
 				}
 			});
-			btnConsultar.setBounds(94, 188, 89, 23);
+			btnConsultar.setBounds(392, 188, 89, 23);
 			getContentPane().add(btnConsultar);
-		}
-		{
-			btnModificar = new JButton("Modificar");
-			btnModificar.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					actionPerformedBtnModificar(e);
-				}
-			});
-			btnModificar.setBounds(267, 188, 89, 23);
-			getContentPane().add(btnModificar);
 		}
 		
 			// Seteamos valoreas al tipo consultar
@@ -275,8 +251,6 @@ public class RegistroMatricularMod extends JInternalFrame {
 		text_Fecha.setEditable(false);
 		text_Hora.setEditable(false);
 		btnConsultar.setEnabled(true);
-		btnEliminar.setEnabled(false);
-		btnModificar.setEnabled(false);
 		
 			// Hacemos el Default de la Tabla
 		model.addColumn("Matricula");
@@ -290,38 +264,22 @@ public class RegistroMatricularMod extends JInternalFrame {
 	
 		//	Radious Button Consultar
 	protected void actionPerformedRdbtn_Consultar(ActionEvent e) {
+		btnConsultar.setText("Consultar");
 		text_Codigo.setEditable(true);
 		text_CodAlumno.setEditable(false);
 		text_CodCurso.setEditable(false);
 		text_Fecha.setEditable(false);
 		text_Hora.setEditable(false);
-		btnConsultar.setEnabled(true);
-		btnEliminar.setEnabled(false);
-		btnModificar.setEnabled(false);
 	}
 	
 		//	Radious Button Modificar
 	protected void actionPerformedRdbtn_Modificar(ActionEvent e) {
+		btnConsultar.setText("Modificar");
 		text_Codigo.setEditable(false);
 		text_CodAlumno.setEditable(false);
 		text_CodCurso.setEditable(true);
 		text_Fecha.setEditable(false);
 		text_Hora.setEditable(false);
-		btnConsultar.setEnabled(true);
-		btnEliminar.setEnabled(false);
-		btnModificar.setEnabled(true);
-	}
-		
-		//  Radious Button Eliminar
-	protected void actionPerformedRdbtn_Eliminar(ActionEvent e) {
-		text_Codigo.setEditable(true);
-		text_CodAlumno.setEditable(false);
-		text_CodCurso.setEditable(false);
-		text_Fecha.setEditable(false);
-		text_Hora.setEditable(false);
-		btnConsultar.setEnabled(false);
-		btnEliminar.setEnabled(true);
-		btnModificar.setEnabled(false);
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////
@@ -397,7 +355,10 @@ public class RegistroMatricularMod extends JInternalFrame {
 
 	// Boton Consultar
 	protected void actionPerformedBtnConsultar(ActionEvent e) {
-		consultarMatricula();
+		if (rdbtn_Consultar.isSelected()) consultarMatricula();
+		else if (rdbtn_Modificar.isSelected()) actualizarMatricula();
+		
+		MostramosTabla();
 	}
 	
 	private void consultarMatricula() {
@@ -412,11 +373,6 @@ public class RegistroMatricularMod extends JInternalFrame {
 			text_Fecha.setText(m.getFecha());
 			text_Hora.setText(m.getHora());
 		}
-	}
-
-	// Boton Modificar
-	protected void actionPerformedBtnModificar(ActionEvent e) {
-		actualizarMatricula();
 	}
 	
 	private void actualizarMatricula() {

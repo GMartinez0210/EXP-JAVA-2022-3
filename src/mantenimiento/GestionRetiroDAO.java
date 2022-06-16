@@ -24,7 +24,7 @@ public class GestionRetiroDAO implements RetiroDAO {
 		try {
 			connection = MySQLConexion8.getConexion();
 			
-			String sql = "{call USP_RegistrarRetiro(null,?,?,?,?)}";
+			String sql = "{call USP_AgregarRetiro(?,?,?,?)}";
 			
 			pstm = connection.prepareStatement(sql);
 			
@@ -55,7 +55,7 @@ public class GestionRetiroDAO implements RetiroDAO {
 	}
 
 	@Override
-	public int actualizar(Retiro retiro) {
+	public int actualizar(String numRetiro, String codCurso) {
 		int actualizar = 0;
 		
 		Connection connection = null;
@@ -64,14 +64,13 @@ public class GestionRetiroDAO implements RetiroDAO {
 		try {
 			connection = MySQLConexion8.getConexion();
 			
-			String sql = "call USP_ActualizarRetiro(?,?,?,?)";
+			String sql = "call USP_ModificarRetiro(?, ?)";
 			
 			pstm = connection.prepareStatement(sql);
 			
-			pstm.setString(1, retiro.getNumRetiro());
-			pstm.setString(2, retiro.getNumMatricula());
-			pstm.setString(3, retiro.getFecha());
-			pstm.setString(4, retiro.getHora());
+			pstm.setString(1, numRetiro);
+			pstm.setString(2, codCurso);
+
 			
 			actualizar = pstm.executeUpdate();
 		} 
@@ -93,41 +92,6 @@ public class GestionRetiroDAO implements RetiroDAO {
 		
 		return actualizar;
 	}
-
-	@Override
-	public int eliminar(int idReporte) {
-		int eliminar = 0;
-		
-		Connection connection = null;
-		PreparedStatement pstm = null;
-		
-		try {
-			connection = MySQLConexion8.getConexion();
-			
-			String sql = "DELETE FROM reporte WHERE idRetiro = ?";
-			
-			pstm = connection.prepareStatement(sql);
-			
-			pstm.setInt(1, idReporte);
-			
-			eliminar = pstm.executeUpdate();
-		} 
-		catch (Exception e) {
-			System.out.println(">>> ERROR en la instruccion SQL: " + e.getMessage());
-		} 
-		finally {
-			try {
-				if (pstm != null) pstm.close();
-				if (connection != null) connection.close();
-				
-			} 
-			catch (Exception e2) {
-				System.out.println(">>> ERROR al cerrar la BD: " + e2.getMessage());
-			}
-		}
-				
-		return eliminar;
-	}
 	
 	@Override
 	public int eliminar(String codReporte) {
@@ -139,7 +103,7 @@ public class GestionRetiroDAO implements RetiroDAO {
 		try {
 			connection = MySQLConexion8.getConexion();
 			
-			String sql = "DELETE FROM reporte WHERE codRetiro = ?";
+			String sql = "{call USP_EliminarRetiro(?)}";
 			
 			pstm = connection.prepareStatement(sql);
 			
@@ -166,9 +130,9 @@ public class GestionRetiroDAO implements RetiroDAO {
 
 	@Override
 	public ArrayList<Retiro> leer() {
-		ArrayList<Retiro> RetiroLista = new ArrayList<Retiro>();
+		ArrayList<Retiro> retiroLista = new ArrayList<Retiro>();
 		
-		Retiro Retiro;
+		Retiro retiro;
 		
 		Connection connection = null;
 		PreparedStatement pstm = null;
@@ -177,22 +141,24 @@ public class GestionRetiroDAO implements RetiroDAO {
 		try {
 			connection = MySQLConexion8.getConexion();
 			
-			String sql = "SELECT * FROM retiro ORDER BY idRetiro";
+			String sql = "{call USP_LeerRetiro()}";
 			
 			pstm = connection.prepareStatement(sql);
 			
 			result = pstm.executeQuery();
 			
 			while(result.next()) {
-				Retiro = new Retiro();
+				retiro = new Retiro();
 				
-				Retiro.setIdRetiro(result.getInt(1));
-				Retiro.setNumRetiro(result.getString(2));
-				Retiro.setNumMatricula(result.getString(3));
-				Retiro.setFecha(result.getString(4));
-				Retiro.setHora(result.getString(5));
+				retiro.setIdRetiro(result.getInt(1));
+				retiro.setNumRetiro(result.getString(2));
+				retiro.setNumMatricula(result.getString(3));
+				retiro.setCodAlumno(result.getString(4));
+				retiro.setCodCurso(result.getString(5));
+				retiro.setFecha(result.getString(6));
+				retiro.setHora(result.getString(7));
 				
-				RetiroLista.add(Retiro);
+				retiroLista.add(retiro);
 			}
 		} 
 		catch (Exception e) {
@@ -209,7 +175,7 @@ public class GestionRetiroDAO implements RetiroDAO {
 			}
 		}
 		
-		return RetiroLista;
+		return retiroLista;
 	}
 	
 	@Override
@@ -223,7 +189,7 @@ public class GestionRetiroDAO implements RetiroDAO {
 		try {
 			connection = MySQLConexion8.getConexion();
 			
-			String sql = "SELECT * FROM retiro WHERE idRetiro = ? ORDER BY idRetiro";
+			String sql = "{call USP_LeerIdRetiro(?)}";
 			
 			pstm = connection.prepareStatement(sql);
 			pstm.setInt(1, idRetiro);
@@ -236,8 +202,10 @@ public class GestionRetiroDAO implements RetiroDAO {
 				retiro.setIdRetiro(result.getInt(1));
 				retiro.setNumRetiro(result.getString(2));
 				retiro.setNumMatricula(result.getString(3));
-				retiro.setFecha(result.getString(4));
-				retiro.setHora(result.getString(5));
+				retiro.setCodAlumno(result.getString(4));
+				retiro.setCodCurso(result.getString(5));
+				retiro.setFecha(result.getString(6));
+				retiro.setHora(result.getString(7));
 			}
 		} 
 		catch (Exception e) {
@@ -268,7 +236,7 @@ public class GestionRetiroDAO implements RetiroDAO {
 		try {
 			connection = MySQLConexion8.getConexion();
 			
-			String sql = "SELECT * FROM retiro WHERE codRetiro = ? ORDER BY idRetiro";
+			String sql = "{call USP_LeerNumRetiro(?)}";
 			
 			pstm = connection.prepareStatement(sql);
 			pstm.setString(1, codRetiro);
@@ -281,8 +249,10 @@ public class GestionRetiroDAO implements RetiroDAO {
 				retiro.setIdRetiro(result.getInt(1));
 				retiro.setNumRetiro(result.getString(2));
 				retiro.setNumMatricula(result.getString(3));
-				retiro.setFecha(result.getString(4));
-				retiro.setHora(result.getString(5));
+				retiro.setCodAlumno(result.getString(4));
+				retiro.setCodCurso(result.getString(5));
+				retiro.setFecha(result.getString(6));
+				retiro.setHora(result.getString(7));
 			}
 		} 
 		catch (Exception e) {

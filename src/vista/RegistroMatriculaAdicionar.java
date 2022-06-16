@@ -161,7 +161,7 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 					actionPerformedBtn_Adicionar(e);
 				}
 			});
-			btn_Adicionar.setBounds(395, 164, 100, 21);
+			btn_Adicionar.setBounds(472, 164, 100, 21);
 			getContentPane().add(btn_Adicionar);
 		}
 		
@@ -248,14 +248,11 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 	
 		// Metodo Mostramos Tabla
 	void mostramosTabla() {
-		System.out.println("Mostramos tabla");
-
 		modelo.setRowCount(0);
 		
 		ArrayList<Matricula> matriculas = gMatricula.leer();
 		
 		for (Matricula m : matriculas) {
-			System.out.println(m);
 			int cod = gAlumno.obtenerEstado(m.getCodAlumno());
 			Object fila[] = { m.getNumMatricula(), m.getCodAlumno(), m.getCodCurso(), cod, m.getFecha(), m.getHora() };
 

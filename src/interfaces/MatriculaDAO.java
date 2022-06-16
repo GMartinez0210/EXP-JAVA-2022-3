@@ -13,6 +13,8 @@ public interface MatriculaDAO {
 	
 	public ArrayList<Matricula> leer();
 	
+	public Matricula leer(String numMatricula);
+	
 	public int eliminar(String numMatricula);
 	
 	public String obtenerCodigoCo();

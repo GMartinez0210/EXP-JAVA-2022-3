@@ -543,7 +543,7 @@ public class MantCursoMod extends JInternalFrame {
 		//	Rdbtn Modificar
 	protected void actionPerformedRdbtn_Modificar(ActionEvent e) {
 		btn_Procesar.setText("Modificar");
-		TextEditable(text_Codigo);
+		TextNoEditable(text_Codigo);
 		TextEditable(text_Asignatura);
 		CBO_Ciclo.setEnabled(true);
 		TextEditable(text_Creditos);

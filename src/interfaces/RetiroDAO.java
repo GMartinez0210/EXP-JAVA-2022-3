@@ -9,16 +9,15 @@ public interface RetiroDAO {
 	public int registrar(Retiro retiro);
 	
 	// actualizar
-	public int actualizar(Retiro retiro);
+	public int actualizar(String numRetiro, String codCurso);
 	
 	// eliminar
-	public int eliminar(int idRetiro);
 	public int eliminar(String codRetiro);
 	
 	// leer
 	public ArrayList<Retiro> leer();
 	public Retiro leer(int idRetiro);
-	public Retiro leer(String codRetiro);
+	public Retiro leer(String numRetiro);
 	
 	// generar codigo correlativo
 	public String generarCodigo();

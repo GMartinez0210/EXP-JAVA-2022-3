@@ -118,6 +118,50 @@ public class GestionMatriculaDAO implements MatriculaDAO {
 		}
 		return lista;
 	}
+	
+	@Override
+	public Matricula leer(String numMatricula) {
+		Matricula matricula = null;
+		PreparedStatement pstm = null;
+		Connection con = null;
+		ResultSet res = null;
+		try {
+			con = MySQLConexion8.getConexion();
+			
+			String sql = "{call USP_LeerMatriculaRetiro(?)}";
+			
+			pstm = con.prepareStatement(sql);
+			pstm.setString(1, numMatricula);
+			
+			res = pstm.executeQuery();
+			
+			while(res.next()) {
+				matricula = new Matricula();
+			
+				matricula.setNumMatricula(res.getString(1));
+				matricula.setCodAlumno(res.getString(2));
+				matricula.setCodCurso(res.getString(3));
+				matricula.setFecha(res.getString(4));
+				matricula.setHora(res.getString(5));	
+				matricula.setNombre(res.getString(6));
+			}
+		} 
+		catch (Exception e) {
+			System.out.println(">>>>>>>>>>>> Error en la Instrucción SQL - Consultar" + e.getMessage());
+		}
+		finally {
+			try {
+				if(pstm != null ) pstm.close();
+				if(res != null) res.close();
+				if(con != null) con.close();
+				
+			} catch (SQLException e2) {
+				System.out.println("<<<< Error al cerrar la base de datos "+ e2.getMessage());
+			}
+		}
+		
+		return matricula;
+	}
 
 	@Override
 	public int eliminar(String numMatricula) {
@@ -230,7 +274,4 @@ public class GestionMatriculaDAO implements MatriculaDAO {
         
 		return matr;
 	}
-
-	
-
 }
