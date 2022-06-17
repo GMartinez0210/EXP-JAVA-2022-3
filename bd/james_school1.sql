@@ -45,7 +45,7 @@ CREATE TABLE `alumno` (
 
 LOCK TABLES `alumno` WRITE;
 /*!40000 ALTER TABLE `alumno` DISABLE KEYS */;
-INSERT INTO `alumno` VALUES (1,'A20210001','Genaro','Martinez','71490743',18,977795907,1),(2,'A20210002','Javier','Cárdenas','71231230',19,989456916,2),(3,'A20210003','Ana Lisa','Melculo','98453204',18,984521323,0),(4,'A20210004','Elver','Galarga','84512348',17,951561202,0);
+INSERT INTO `alumno` VALUES (1,'A20210001','Genaro','Martinez','71490743',18,977795907,2),(2,'A20210002','Javier','Cárdenas','71231230',19,989456916,1),(3,'A20210003','Ana Lisa','Melculo','98453204',18,984521323,0),(4,'A20210004','Elver','Galarga','84512348',17,951561202,0);
 /*!40000 ALTER TABLE `alumno` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -98,7 +98,7 @@ CREATE TABLE `matricula` (
   KEY `codAlumno_matricula` (`codAlumno`),
   CONSTRAINT `codAlumno_matricula` FOREIGN KEY (`codAlumno`) REFERENCES `alumno` (`codAlumno`),
   CONSTRAINT `codCurso_matricula` FOREIGN KEY (`codCurso`) REFERENCES `curso` (`codCurso`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -107,7 +107,7 @@ CREATE TABLE `matricula` (
 
 LOCK TABLES `matricula` WRITE;
 /*!40000 ALTER TABLE `matricula` DISABLE KEYS */;
-INSERT INTO `matricula` VALUES (1,'M100001','A20210001','C10001','2021-11-29','07:19:58'),(2,'M100002','A20210002','C10002','2021-11-22','07:31:42'),(3,'M100003','A20210003','C10003','2022-06-12','10:01:25'),(4,'M100004','A20210003','C10003','2022-06-12','10:04:24');
+INSERT INTO `matricula` VALUES (1,'M100001','A20210001','C10001','2021-11-22','00:00:10'),(2,'M100002','A20210002','C10001','2021-11-22','00:00:10'),(5,'M100003','A20210002','C10001','2022-06-16','22:36:54');
 /*!40000 ALTER TABLE `matricula` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -126,9 +126,9 @@ CREATE TABLE `retiro` (
   `horaRetiro` varchar(45) NOT NULL,
   PRIMARY KEY (`idRetiro`),
   UNIQUE KEY `numRetiro_UNIQUE` (`numRetiro`),
-  KEY `numMatricula_retiro_idx` (`numMatricula`),
-  CONSTRAINT `numMatricula_retiro` FOREIGN KEY (`numMatricula`) REFERENCES `matricula` (`numMatricula`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `fkNumMatricula_idx` (`numMatricula`),
+  CONSTRAINT `fkNumMatricula` FOREIGN KEY (`numMatricula`) REFERENCES `matricula` (`numMatricula`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -137,7 +137,7 @@ CREATE TABLE `retiro` (
 
 LOCK TABLES `retiro` WRITE;
 /*!40000 ALTER TABLE `retiro` DISABLE KEYS */;
-INSERT INTO `retiro` VALUES (1,'R100001','M100002','2021-11-29','07:24:03'),(4,'R100003','M100001','2022-06-13','21:01:21');
+INSERT INTO `retiro` VALUES (1,'R100001','M100001','2022-06-16','10');
 /*!40000 ALTER TABLE `retiro` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -148,6 +148,23 @@ UNLOCK TABLES;
 --
 -- Dumping routines for database 'james_school'
 --
+/*!50003 DROP PROCEDURE IF EXISTS `usp_actualizarEstadoAlumno` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `usp_actualizarEstadoAlumno`(est int, codA varchar(9))
+update alumno set estadoAlumno = est where codAlumno = codA ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `USP_ActualizarRetiro` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -368,6 +385,27 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `usp_listarAlumnosMatriculados` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `usp_listarAlumnosMatriculados`()
+select m.idMatricula, m.numMatricula, m.codAlumno, m.codCurso, fechaMatricula, horaMatricula 
+	from matricula as m 
+    inner join alumno as a
+    on m.codAlumno = a.codAlumno
+    where a.estadoAlumno = 1 ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `USP_ModificarRetiro` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -385,6 +423,23 @@ BEGIN
     SET m.codCurso = codCurso
     WHERE r.numRetiro = numRetiro;
 END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `usp_obtenerCursoxCod` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `usp_obtenerCursoxCod`(IN cod varchar(6))
+select * from curso where codCurso = cod ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -419,4 +474,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-06-15 16:40:11
+-- Dump completed on 2022-06-16 22:44:18

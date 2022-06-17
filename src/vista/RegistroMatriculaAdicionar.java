@@ -11,9 +11,6 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
-import arrays.ArrayAlumno;
-import arrays.ArrayCurso;
-import arrays.ArrayMatricula;
 import entidad.Alumno;
 import entidad.Curso;
 import entidad.Matricula;
@@ -89,12 +86,6 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 		}
 		{
 			text_Alumno = new JTextField();
-			text_Alumno.addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyTyped(KeyEvent e) {
-					keyTypedText_Alumno(e);
-				}
-			});
 			text_Alumno.setFont(new Font("Tahoma", Font.PLAIN, 12));
 			text_Alumno.setColumns(10);
 			text_Alumno.setBounds(153, 164, 140, 19);
@@ -102,12 +93,6 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 		}
 		{
 			text_Curso = new JTextField();
-			text_Curso.addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyTyped(KeyEvent e) {
-					keyTypedText_Curso(e);
-				}
-			});
 			text_Curso.setFont(new Font("Tahoma", Font.PLAIN, 12));
 			text_Curso.setColumns(10);
 			text_Curso.setBounds(432, 132, 140, 19);
@@ -169,7 +154,6 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 		modelo.addColumn("Num. Matri");
 		modelo.addColumn("Cod. Alum");
 		modelo.addColumn("Cod. Curso");
-		modelo.addColumn("Estado");
 		modelo.addColumn("Fecha");
 		modelo.addColumn("Hora");
 		table.setModel(modelo);
@@ -180,23 +164,6 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 	void SoloNumeros (KeyEvent e) {
 		char caracter = e.getKeyChar();
 		if (!(Character.isDigit(caracter))) {
-			getToolkit();
-			e.consume();
-		}
-	}
-	
-		//	Metodo Solo Letras
-	void SoloLetras (KeyEvent e) {
-		char caracter = e.getKeyChar();
-		if (!(Character.isLetter(caracter) || caracter == e.VK_SPACE)) {
-			getToolkit();
-			e.consume();
-		}
-	}
-		//	No caracteres especiales
-	void NoEspeciales (KeyEvent e) {
-		char caracter = e.getKeyChar();
-		if (!(Character.isLetter(caracter) || Character.isDigit(caracter))) {
 			getToolkit();
 			e.consume();
 		}
@@ -216,34 +183,9 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 		}
 	}
 	
-	//	Validando Codigo Alumno
-	protected void keyTypedText_Alumno(KeyEvent e) {
-		NoEspeciales(e);
-		BorrandoDigitos(e, 1);
-	}
-	
-	//	Validando Codigo Curso
-	protected void keyTypedText_Curso(KeyEvent e) {
-		NoEspeciales(e);
-		BorrandoDigitos(e, 2);
-	}
-	
 		//	Metodo Leer String
 	String LeerString(JTextField text) {
 		return text.getText().trim().toString();
-	}
-	
-		//	Metodo Error
-	void Error(String x, JTextField text) {
-		JOptionPane.showMessageDialog(this, "No relleno el campo " + x, "ERROR", 0);
-		text.setText("");
-		text.requestFocus();
-	}
-	
-		//	Metodo No Existe
-	void NoExiste(String x, JTextField text) {
-		JOptionPane.showMessageDialog(this, "No existe el " + x, "ERROR", 0);
-		text.requestFocus();
 	}
 	
 		// Metodo Mostramos Tabla
@@ -253,8 +195,7 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 		ArrayList<Matricula> matriculas = gMatricula.leer();
 		
 		for (Matricula m : matriculas) {
-			int cod = gAlumno.obtenerEstado(m.getCodAlumno());
-			Object fila[] = { m.getNumMatricula(), m.getCodAlumno(), m.getCodCurso(), cod, m.getFecha(), m.getHora() };
+			Object fila[] = { m.getNumMatricula(), m.getCodAlumno(), m.getCodCurso(), m.getFecha(), m.getHora() };
 
 			modelo.addRow(fila);
 		}
@@ -282,17 +223,18 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 		String numM, codA, codC, fecha, hora;
 		// Obtener los datos de GUI
 		numM = text_Matricula.getText();
-		codA = text_Alumno.getText();
-		codC = text_Curso.getText();
+		codA = obtenerCodigoAlumno();
+		codC = obtenerCodigoCurso();
 		hora = Hora();
 		fecha = Fecha();
 		// validar
 		if (codA == null || codC == null) {
+			System.out.println("No se matriculo");
 			return;
 		} else {
-			// crear un objeto de la clase "Usuario"
+			
 			Matricula m = new Matricula();
-			// setear --> asignar los valores obtenidos de la GUI a los atributos privados
+			
 			m.setNumMatricula(numM);
 			m.setCodAlumno(codA);
 			m.setCodCurso(codC);
@@ -305,13 +247,54 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 			if (ok == 0) {
 				mensajeError("Error en la actualización ");
 			} else {
-				mensajeExitoso("Usuario actualizado");
+				gAlumno.actualizarEstadoAlumno(1, codA);
+				mensajeExitoso("Matricula exitosa");
 				text_Matricula.setText(gMatricula.obtenerCodigoCo());
 				mostramosTabla();
 			}
 		}
 		
 		
+	}
+
+	private String obtenerCodigoCurso() {
+		String codCurso = null;
+		Curso c = gCurso.listarCurso(text_Curso.getText());
+		
+		if (text_Curso.getText().length() == 0) {
+			mensajeError("El campo del codigo del curso no debe estar vacio");
+			text_Curso.requestFocus();
+		} else if (c == null) {
+			mensajeError("El curso no existe o introdujo mal el codigo. \nPor favor introduce un codigo con el siguiente formato: C1xxxx");
+			text_Alumno.requestFocus();
+		} else {
+			codCurso = c.getCodCurso();
+		} 
+		
+		return codCurso;
+	}
+
+	private String obtenerCodigoAlumno() {
+		String codAlumno = null;
+		Alumno a = gAlumno.listarAlumno(text_Alumno.getText());
+		
+		if (text_Alumno.getText().length() == 0) {
+			mensajeError("El campo del codigo del alumno no debe estar vacio");
+			text_Alumno.requestFocus();
+		} else if (a == null) {
+			mensajeError("No se encuentra al alumno o introdujo mal el codigo. \nPor favor introduce un codigo con el siguiente formato: A2xxxxxxx");
+			text_Alumno.requestFocus();
+		} else if (a.getEstado() == 1){
+			mensajeError("El alumno ya esta matriculado");
+			text_Alumno.requestFocus();
+		} else if (a.getEstado() == 2) {
+			mensajeError("El alumno esta retirado");
+			text_Alumno.requestFocus();
+		} else {
+			codAlumno = a.getCodAlumno();
+		} 
+		
+		return codAlumno;
 	}
 
 	private void mensajeExitoso(String msj) {

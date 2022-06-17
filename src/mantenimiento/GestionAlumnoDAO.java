@@ -10,10 +10,8 @@ import entidad.Alumno;
 import interfaces.AlumnoDAO;
 import util.MySQLConexion8;
 
+public class GestionAlumnoDAO implements AlumnoDAO{
 
-public class GestionAlumnoDAO implements AlumnoDAO {
-
-	@Override
 	public int registrar(Alumno a) {
 		int res = 0;
 		Connection con = null;
@@ -45,7 +43,6 @@ public class GestionAlumnoDAO implements AlumnoDAO {
 		return res;
 	}
 
-	@Override
 	public int actualizar(Alumno a) {
 		int res = 0;
 		Connection con = null;
@@ -78,7 +75,6 @@ public class GestionAlumnoDAO implements AlumnoDAO {
 		return res;
 	}
 
-	@Override
 	public ArrayList<Alumno> listar() {
 		ArrayList<Alumno> lista = new ArrayList<Alumno>();
 		Alumno a;
@@ -117,7 +113,6 @@ public class GestionAlumnoDAO implements AlumnoDAO {
 		return lista ;
 	}
 	
-	@Override
 	public int eliminar(Alumno a) {
 		int res = 0;
 		Connection con = null;
@@ -146,7 +141,6 @@ public class GestionAlumnoDAO implements AlumnoDAO {
 		return res;
 	}
 	
-	@Override
     public String leerCodigoAlumno() {
 
         String codigoAlumno = null;
@@ -181,7 +175,6 @@ public class GestionAlumnoDAO implements AlumnoDAO {
         return  "A"+codAlumno;
     }
 
-	@Override
     public Alumno listarAlumno(String codAlumno){
         Alumno alumno = null;
         Connection con = null;
@@ -217,7 +210,6 @@ public class GestionAlumnoDAO implements AlumnoDAO {
         return alumno;
     }
 
-	@Override
     public Alumno listarAlumnoDni(String dni){
         Alumno alumno = null;
         Connection con = null;
@@ -253,37 +245,60 @@ public class GestionAlumnoDAO implements AlumnoDAO {
         return alumno;
     }
 
-	@Override
 	public int obtenerEstado(String codAlumno) {
-		int estadoAlumno = 0;
-		
-		Connection con = null;
-        PreparedStatement pstm = null;
-        ResultSet res = null;
+		String codigoAlumno = null;
+        int estado = 0;
         
+        PreparedStatement pstm = null;
+        Connection connection = null;
+        ResultSet result = null;
         try {
-            con = MySQLConexion8.getConexion();
+            connection = MySQLConexion8.getConexion();
             String sql = "{call usp_obtenerEstadoAlumno(?)}";
-            pstm = con.prepareStatement(sql);
+            pstm = connection.prepareStatement(sql);
             pstm.setString(1, codAlumno);
-            res = pstm.executeQuery();
-            
-            while(res.next()) {            	
-            	estadoAlumno = res.getInt(1);
+            result = pstm.executeQuery();
+            while(result.next()) {
+                estado = result.getInt(1);
             }
         } catch (Exception e) {
-            System.out.println(">>>>>>>>>>>> Error en la Instrucción SQL - Consultar" + e.getMessage());
-        }finally {
+            System.out.println(">>> ERROR en la instruccion SQL " + e.getMessage());
+        } finally {
             try {
-                if(pstm != null ) pstm.close();
-                if(res != null) res.close();
-                if(con != null) con.close();
+                if (pstm != null) pstm.close();
+                if (connection != null) connection.close();
 
-            } catch (SQLException e2) {
-                System.out.println("<<<< Error al cerrar la base de datos "+ e2.getMessage());
+            } catch (Exception e2) {
+                System.out.println(">>> Error al cerrar la bd: " + e2.getMessage());
             }
         }
-		
-		return estadoAlumno;
+        return estado;
+	}
+
+	@Override
+	public void actualizarEstadoAlumno(int estado, String codA) {
+		PreparedStatement pstm = null;
+        Connection connection = null;
+        
+        try {
+            
+        	connection = MySQLConexion8.getConexion();
+            String sql = "{call usp_actualizarEstadoAlumno(?, ?)}";
+            pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, estado);
+            pstm.setString(2, codA);
+            pstm.executeQuery();
+       
+        } catch (Exception e) {
+            System.out.println(">>> ERROR en la instruccion SQL " + e.getMessage());
+        } finally {
+            try {
+                if (pstm != null) pstm.close();
+                if (connection != null) connection.close();
+
+            } catch (Exception e2) {
+                System.out.println(">>> Error al cerrar la bd: " + e2.getMessage());
+            }
+        }
 	}
 }

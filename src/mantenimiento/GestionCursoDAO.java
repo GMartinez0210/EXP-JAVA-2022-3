@@ -223,7 +223,6 @@ public class GestionCursoDAO implements CursoDAO {
 		return res;
 	}
 	public Curso listarCurso(String codCurso){
-        ArrayList<Curso> listarCurso = new ArrayList<Curso>();
         Curso curso = null;
         Connection con = null;
         PreparedStatement pstm = null;
