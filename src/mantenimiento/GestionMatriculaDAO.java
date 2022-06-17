@@ -274,4 +274,47 @@ public class GestionMatriculaDAO implements MatriculaDAO {
         
 		return matr;
 	}
+
+	@Override
+	public ArrayList<Matricula> leerSoloAlumnMatriculados() {
+		ArrayList<Matricula> lista = new ArrayList<Matricula>();
+		Matricula matri;
+		PreparedStatement pstm = null;
+		Connection con = null;
+		ResultSet res = null;
+		try {
+			con = MySQLConexion8.getConexion();
+			
+			String sql = "call usp_listarAlumnosMatriculados()";
+			
+			pstm = con.prepareStatement(sql);
+			
+			res = pstm.executeQuery();
+			
+			while(res.next()) {
+				matri = new Matricula();
+			
+				matri.setNumMatricula(res.getString(2));
+				matri.setCodAlumno(res.getString(3));
+				matri.setCodCurso(res.getString(4));
+				matri.setFecha(res.getString(5));
+				matri.setHora(res.getString(6));
+			
+				lista.add(matri);	 
+			}
+							
+		} catch (Exception e) {
+			System.out.println(">>>>>>>>>>>> Error en la Instrucción SQL - Consultar" + e.getMessage());
+		}finally {
+			try {
+				if(pstm != null ) pstm.close();
+				if(res != null) res.close();
+				if(con != null) con.close();
+				
+			} catch (SQLException e2) {
+				System.out.println("<<<< Error al cerrar la base de datos "+ e2.getMessage());
+			}
+		}
+		return lista;
+	}
 }

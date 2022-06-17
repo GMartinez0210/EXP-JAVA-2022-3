@@ -14,4 +14,6 @@ public interface CursoDAO {
 	public int eliminar(Curso curso);
 	
 	public String leerCodigo();
+	
+	public Curso listarCurso(String codCurso);
 }

@@ -7,9 +7,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import entidad.Alumno;
+import interfaces.AlumnoDAO;
 import util.MySQLConexion8;
 
-public class GestionAlumnoDAO {
+public class GestionAlumnoDAO implements AlumnoDAO{
 
 	public int registrar(Alumno a) {
 		int res = 0;
@@ -243,4 +244,61 @@ public class GestionAlumnoDAO {
         }
         return alumno;
     }
+
+	public int obtenerEstado(String codAlumno) {
+		String codigoAlumno = null;
+        int estado = 0;
+        
+        PreparedStatement pstm = null;
+        Connection connection = null;
+        ResultSet result = null;
+        try {
+            connection = MySQLConexion8.getConexion();
+            String sql = "{call usp_obtenerEstadoAlumno(?)}";
+            pstm = connection.prepareStatement(sql);
+            pstm.setString(1, codAlumno);
+            result = pstm.executeQuery();
+            while(result.next()) {
+                estado = result.getInt(1);
+            }
+        } catch (Exception e) {
+            System.out.println(">>> ERROR en la instruccion SQL " + e.getMessage());
+        } finally {
+            try {
+                if (pstm != null) pstm.close();
+                if (connection != null) connection.close();
+
+            } catch (Exception e2) {
+                System.out.println(">>> Error al cerrar la bd: " + e2.getMessage());
+            }
+        }
+        return estado;
+	}
+
+	@Override
+	public void actualizarEstadoAlumno(int estado, String codA) {
+		PreparedStatement pstm = null;
+        Connection connection = null;
+        
+        try {
+            
+        	connection = MySQLConexion8.getConexion();
+            String sql = "{call usp_actualizarEstadoAlumno(?, ?)}";
+            pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, estado);
+            pstm.setString(2, codA);
+            pstm.executeQuery();
+       
+        } catch (Exception e) {
+            System.out.println(">>> ERROR en la instruccion SQL " + e.getMessage());
+        } finally {
+            try {
+                if (pstm != null) pstm.close();
+                if (connection != null) connection.close();
+
+            } catch (Exception e2) {
+                System.out.println(">>> Error al cerrar la bd: " + e2.getMessage());
+            }
+        }
+	}
 }
