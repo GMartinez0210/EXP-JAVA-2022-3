@@ -16,4 +16,6 @@ public interface CursoDAO {
 	public String leerCodigo();
 	
 	public Curso listarCurso(String codCurso);
+	
+	public ArrayList<Curso> leerXNombre(String nombre);
 }

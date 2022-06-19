@@ -110,7 +110,7 @@ public class GestionAlumnoDAO implements AlumnoDAO{
 				System.out.println("<<<< Error al cerrar la base de datos "+ e2.getMessage());
 			}
 		}	
-		return lista ;
+		return lista;
 	}
 	
 	public int eliminar(Alumno a) {
@@ -300,5 +300,85 @@ public class GestionAlumnoDAO implements AlumnoDAO{
                 System.out.println(">>> Error al cerrar la bd: " + e2.getMessage());
             }
         }
+	}
+
+	@Override
+	public ArrayList<Alumno> listarAlumnoXEstado(int estado) {
+		ArrayList<Alumno> lista = new ArrayList<Alumno>();
+		Alumno a;
+		Connection con = null;
+		PreparedStatement pstm = null;
+		ResultSet res = null;
+		try {
+			con = MySQLConexion8.getConexion();
+			String sql = "SELECT * FROM alumno where estadoAlumno = ?";
+			pstm = con.prepareStatement(sql);
+			pstm.setInt(1, estado); 
+			res = pstm.executeQuery();
+			while(res.next()) {
+				a = new Alumno();
+				a.setCodAlumno(res.getString(2));
+				a.setNombres(res.getString(3));
+				a.setApellidos(res.getString(4));
+				a.setDni(res.getString(5));
+				a.setEdad(res.getInt(6));
+				a.setCelular(res.getInt(7));
+				a.setEstado(res.getInt(8));
+	 
+				lista.add(a);
+			}					
+		} catch (Exception e) {
+			System.out.println(">>>>>>>>>>>> Error en la Instrucción SQL - Consultar" + e.getMessage());
+		}finally {
+			try {
+				if(pstm != null ) pstm.close();
+				if(res != null) res.close();
+				if(con != null) con.close();
+				
+			} catch (SQLException e2) {
+				System.out.println("<<<< Error al cerrar la base de datos "+ e2.getMessage());
+			}
+		}	
+		return lista;
+	}
+
+	@Override
+	public ArrayList<Alumno> listarAlumnoXNombre(String nombre) {
+		ArrayList<Alumno> lista = new ArrayList<Alumno>();
+		Alumno a;
+		Connection con = null;
+		PreparedStatement pstm = null;
+		ResultSet res = null;
+		try {
+			con = MySQLConexion8.getConexion();
+			String sql = "SELECT * FROM alumno where nombreAlumno like concat(?, '%') and estadoAlumno = 0";
+			pstm = con.prepareStatement(sql);
+			pstm.setString(1, nombre); 
+			res = pstm.executeQuery();
+			while(res.next()) {
+				a = new Alumno();
+				a.setCodAlumno(res.getString(2));
+				a.setNombres(res.getString(3));
+				a.setApellidos(res.getString(4));
+				a.setDni(res.getString(5));
+				a.setEdad(res.getInt(6));
+				a.setCelular(res.getInt(7));
+				a.setEstado(res.getInt(8));
+	 
+				lista.add(a);
+			}					
+		} catch (Exception e) {
+			System.out.println(">>>>>>>>>>>> Error en la Instrucción SQL - Consultar" + e.getMessage());
+		}finally {
+			try {
+				if(pstm != null ) pstm.close();
+				if(res != null) res.close();
+				if(con != null) con.close();
+				
+			} catch (SQLException e2) {
+				System.out.println("<<<< Error al cerrar la base de datos "+ e2.getMessage());
+			}
+		}	
+		return lista;
 	}
 }

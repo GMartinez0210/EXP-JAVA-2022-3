@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import entidad.Alumno;
 import entidad.Curso;
 import interfaces.CursoDAO;
 import util.MySQLConexion8;
@@ -255,4 +256,42 @@ public class GestionCursoDAO implements CursoDAO {
         }
         return curso;
     }
+
+	@Override
+	public ArrayList<Curso> leerXNombre(String nombre) {
+		ArrayList<Curso> lista = new ArrayList<Curso>();
+		Curso c;
+		Connection con = null;
+		PreparedStatement pstm = null;
+		ResultSet res = null;
+		try {
+			con = MySQLConexion8.getConexion();
+			String sql = "SELECT * FROM curso where asignaturaCurso like concat(?, '%')";
+			pstm = con.prepareStatement(sql);
+			pstm.setString(1, nombre); 
+			res = pstm.executeQuery();
+			while(res.next()) {
+				c = new Curso();
+				c.setCodCurso(res.getString(2));
+				c.setAsignaturas(res.getString(3));
+				c.setCiclo(res.getInt(4));
+				c.setCreditos(res.getInt(5));
+				c.setHoras(res.getInt(6));
+	 
+				lista.add(c);
+			}					
+		} catch (Exception e) {
+			System.out.println(">>>>>>>>>>>> Error en la Instrucción SQL - Consultar" + e.getMessage());
+		}finally {
+			try {
+				if(pstm != null ) pstm.close();
+				if(res != null) res.close();
+				if(con != null) con.close();
+				
+			} catch (SQLException e2) {
+				System.out.println("<<<< Error al cerrar la base de datos "+ e2.getMessage());
+			}
+		}	
+		return lista;
+	}
 }

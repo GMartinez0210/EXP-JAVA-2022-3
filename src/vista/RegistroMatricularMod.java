@@ -28,26 +28,22 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.ImageIcon;
 
 public class RegistroMatricularMod extends JInternalFrame {
 	private JTable table;
 	private JScrollPane scrollPane;
-	private JLabel lblAccion;
-	private JRadioButton rdbtn_Modificar;
-	private JRadioButton rdbtn_Consultar;
 	private DefaultTableModel modelo;
-	ButtonGroup btnsGrupo = new ButtonGroup();
 	private JLabel lblNewLabel;
 	private JTextField text_Codigo;
 	private JLabel lblNewLabel_1;
 	private JTextField text_CodAlumno;
 	private JLabel lblNewLabel_2;
-	private JTextField text_CodCurso;
+	public static JTextField text_CodCurso;
 	private JLabel lblNewLabel_3;
 	private JTextField text_Hora;
 	private JTextField text_Fecha;
 	private JLabel lblNewLabel_4;
-	private JButton btnLimpiar;
 	private JButton btnEliminar;
 	
 	DefaultTableModel model = new DefaultTableModel();
@@ -56,6 +52,7 @@ public class RegistroMatricularMod extends JInternalFrame {
 	GestionAlumnoDAO gAlumno = new GestionAlumnoDAO();
 	GestionCursoDAO gCurso = new GestionCursoDAO();
 	private JButton btnModificar;
+	private JButton btnDlgListarCurso;
 
 	/**
 	 * Launch the application.
@@ -101,130 +98,71 @@ public class RegistroMatricularMod extends JInternalFrame {
 			}
 		}
 		{
-			lblAccion = new JLabel("Accion");
-			lblAccion.setFont(new Font("Consolas", Font.BOLD, 15));
-			lblAccion.setBounds(67, 32, 83, 35);
-			getContentPane().add(lblAccion);
-		}
-		{
-			rdbtn_Modificar = new JRadioButton("Modificar");
-			rdbtn_Modificar.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					actionPerformedRdbtn_Modificar(e);
-				}
-			});
-			btnsGrupo.add(rdbtn_Modificar);
-			rdbtn_Modificar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-			rdbtn_Modificar.setBounds(308, 33, 103, 21);
-			getContentPane().add(rdbtn_Modificar);
-		}
-		{
-			rdbtn_Consultar = new JRadioButton("Consultar");
-			rdbtn_Consultar.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					actionPerformedRdbtn_Consultar(e);
-				}
-			});
-			btnsGrupo.add(rdbtn_Consultar);
-			rdbtn_Consultar.setSelected(true);
-			rdbtn_Consultar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-			rdbtn_Consultar.setBounds(172, 33, 103, 21);
-			getContentPane().add(rdbtn_Consultar);
-		}
-		{
 			lblNewLabel = new JLabel("Num. Matricula");
 			lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 12));
-			lblNewLabel.setBounds(47, 94, 123, 14);
+			lblNewLabel.setBounds(47, 43, 123, 14);
 			getContentPane().add(lblNewLabel);
 		}
 		{
 			text_Codigo = new JTextField();
 			text_Codigo.setText("Dale clic a un campo en Tabla");
-			text_Codigo.addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyTyped(KeyEvent e) {
-					keyTypedText_Codigo(e);
-				}
-			});
 			text_Codigo.setFont(new Font("Tahoma", Font.PLAIN, 12));
-			text_Codigo.setBounds(154, 91, 170, 20);
+			text_Codigo.setBounds(154, 40, 170, 20);
 			getContentPane().add(text_Codigo);
 			text_Codigo.setColumns(10);
 		}
 		{
 			lblNewLabel_1 = new JLabel("Cod. Alumno");
 			lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 12));
-			lblNewLabel_1.setBounds(47, 122, 103, 14);
+			lblNewLabel_1.setBounds(47, 86, 103, 14);
 			getContentPane().add(lblNewLabel_1);
 		}
 		{
 			text_CodAlumno = new JTextField();
-			text_CodAlumno.addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyTyped(KeyEvent e) {
-					keyTypedText_CodAlumno(e);
-				}
-			});
 			text_CodAlumno.setFont(new Font("Tahoma", Font.PLAIN, 12));
-			text_CodAlumno.setBounds(154, 119, 170, 20);
+			text_CodAlumno.setBounds(154, 83, 170, 20);
 			getContentPane().add(text_CodAlumno);
 			text_CodAlumno.setColumns(10);
 		}
 		{
 			lblNewLabel_2 = new JLabel("Cod Curso");
 			lblNewLabel_2.setFont(new Font("Tahoma", Font.PLAIN, 12));
-			lblNewLabel_2.setBounds(47, 147, 103, 14);
+			lblNewLabel_2.setBounds(47, 131, 103, 14);
 			getContentPane().add(lblNewLabel_2);
 		}
 		{
 			text_CodCurso = new JTextField();
-			text_CodCurso.addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyTyped(KeyEvent e) {
-					keyTypedText_CodCurso(e);
-				}
-			});
+			text_CodCurso.setEditable(false);
 			text_CodCurso.setFont(new Font("Tahoma", Font.PLAIN, 12));
-			text_CodCurso.setBounds(154, 144, 170, 20);
+			text_CodCurso.setBounds(154, 128, 145, 20);
 			getContentPane().add(text_CodCurso);
 			text_CodCurso.setColumns(10);
 		}
 		{
 			lblNewLabel_3 = new JLabel("Hora:");
 			lblNewLabel_3.setFont(new Font("Tahoma", Font.PLAIN, 12));
-			lblNewLabel_3.setBounds(371, 94, 94, 14);
+			lblNewLabel_3.setBounds(371, 43, 94, 14);
 			getContentPane().add(lblNewLabel_3);
 		}
 		{
 			text_Hora = new JTextField();
 			text_Hora.setFont(new Font("Tahoma", Font.PLAIN, 12));
-			text_Hora.setBounds(454, 91, 123, 20);
+			text_Hora.setBounds(454, 40, 123, 20);
 			getContentPane().add(text_Hora);
 			text_Hora.setColumns(10);
 		}
 		{
 			text_Fecha = new JTextField();
 			text_Fecha.setFont(new Font("Tahoma", Font.PLAIN, 12));
-			text_Fecha.setBounds(454, 119, 123, 20);
+			text_Fecha.setBounds(454, 83, 123, 20);
 			getContentPane().add(text_Fecha);
 			text_Fecha.setColumns(10);
 		}
 		{
 			lblNewLabel_4 = new JLabel("Fecha:");
 			lblNewLabel_4.setFont(new Font("Tahoma", Font.PLAIN, 12));
-			lblNewLabel_4.setBounds(371, 122, 94, 14);
+			lblNewLabel_4.setBounds(371, 86, 94, 14);
 			getContentPane().add(lblNewLabel_4);
-		}
-		{
-			btnLimpiar = new JButton("Limpiar Curso");
-			btnLimpiar.setVisible(false);
-			btnLimpiar.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					actionPerformedBtnLimpiar(e);
-				}
-			});
-			btnLimpiar.setBounds(214, 194, 135, 23);
-			getContentPane().add(btnLimpiar);
 		}
 		{
 			btnEliminar = new JButton("Eliminar");
@@ -233,14 +171,13 @@ public class RegistroMatricularMod extends JInternalFrame {
 					actionPerformedBtnEliminar(e);
 				}
 			});
-			btnEliminar.setBounds(488, 194, 89, 23);
+			btnEliminar.setBounds(488, 178, 89, 23);
 			getContentPane().add(btnEliminar);
 		}
 		
 			// Seteamos valoreas al tipo consultar
 		text_Codigo.setEditable(false);
 		text_CodAlumno.setEditable(false);
-		text_CodCurso.setEditable(false);
 		text_Fecha.setEditable(false);
 		text_Hora.setEditable(false);
 		
@@ -258,25 +195,22 @@ public class RegistroMatricularMod extends JInternalFrame {
 				actionPerformedBtnModificar(e);
 			}
 		});
-		btnModificar.setVisible(false);
-		btnModificar.setBounds(371, 194, 94, 23);
+		btnModificar.setVisible(true);
+		btnModificar.setBounds(371, 178, 94, 23);
 		getContentPane().add(btnModificar);
+		{
+			btnDlgListarCurso = new JButton("");
+			btnDlgListarCurso.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					actionPerformedBtnDlgListarCurso(e);
+				}
+			});
+			btnDlgListarCurso.setIcon(new ImageIcon(RegistroMatricularMod.class.getResource("/imagenes/open-book (1).png")));
+			btnDlgListarCurso.setBounds(298, 128, 26, 23);
+			getContentPane().add(btnDlgListarCurso);
+		}
 		MostramosTabla();
 	}	
-	
-		//	Radious Button Consultar
-	protected void actionPerformedRdbtn_Consultar(ActionEvent e) {
-		btnModificar.setVisible(false);
-		btnLimpiar.setVisible(false);
-		text_CodCurso.setEditable(false);
-	}
-	
-		//	Radious Button Modificar
-	protected void actionPerformedRdbtn_Modificar(ActionEvent e) {
-		btnModificar.setVisible(true);
-		btnLimpiar.setVisible(true);
-		text_CodCurso.setEditable(true);
-	}
 	
 	/////////////////////////////////////////////////////////////////////////////////
 	//////////////// METODOS COMPLEMENTARIOS
@@ -302,15 +236,6 @@ public class RegistroMatricularMod extends JInternalFrame {
 	void LimpiarCurso() {
 		text_CodCurso.setText("");
 	}
-
-	/////////////////////////////////////////////////////////////////////////////////
-	//////////////// BOTONES
-	/////////////////////////////////////////////////////////////////////////////////
-	
-	// Boton Limpiar
-	protected void actionPerformedBtnLimpiar(ActionEvent e) {
-		LimpiarCurso();
-	}
 	
 	// boton Modificar
 	protected void actionPerformedBtnModificar(ActionEvent e) {
@@ -323,6 +248,17 @@ public class RegistroMatricularMod extends JInternalFrame {
 		eliminarMatricula();
 	}
 	
+	// Mostrar dialogo curso
+	protected void actionPerformedBtnDlgListarCurso(ActionEvent e) {
+		mostrarDialogCursos();
+	}
+	
+	private void mostrarDialogCursos() {
+		DlgListarCursos aRegistrados = new DlgListarCursos();
+		aRegistrados.setVisible(true);
+		aRegistrados.setLocationRelativeTo(this);
+	}
+
 	private void eliminarMatricula() {
 		String codCurso = text_CodCurso.getText();
 		Curso curso = gCurso.listarCurso(text_CodCurso.getText());
@@ -407,20 +343,5 @@ public class RegistroMatricularMod extends JInternalFrame {
 	
 	private void mensajeExitoso(String msj) {
 		JOptionPane.showMessageDialog(this, msj, "Registro bien", 1);
-	}
-	
-	//	Validando Numero Matricula  	
-	protected void keyTypedText_Codigo(KeyEvent e) {
-		
-	}
-	
-		//	Validando Codigo de Alumno
-	protected void keyTypedText_CodAlumno(KeyEvent e) {
-		
-	}
-	
-		//	Validando Codigo de Curso
-	protected void keyTypedText_CodCurso(KeyEvent e) {
-		
 	}
 }
