@@ -83,7 +83,7 @@ public class GestionAlumnoDAO implements AlumnoDAO{
 		ResultSet res = null;
 		try {
 			con = MySQLConexion8.getConexion();
-			String sql = "SELECT * FROM alumno";
+			String sql = "SELECT * FROM alumno order by estadoAlumno";
 			pstm = con.prepareStatement(sql);
 			 res = pstm.executeQuery();
 			 while(res.next()) {
