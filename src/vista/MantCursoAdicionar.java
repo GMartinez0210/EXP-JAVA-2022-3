@@ -353,16 +353,17 @@ public class MantCursoAdicionar extends JInternalFrame {
 			}
 		}
 		
+		MostramosTabla();
 	}
 
 	private String getAsignatura() {
 		String asignatura = null;
 		try {
 			asignatura = text_Asignatura.getText(); 
-			if(asignatura == null) mensajeError("Selecciona un ciclo");
+			if(asignatura == null) mensajeError("Selecciona un asignatura");
 			
 		}catch (Exception e) {
-			mensajeError("No ha seleccionado ningun ciclo");
+			mensajeError("No ha seleccionado ningun asignatura");
 		}
     	return asignatura;
 	}
@@ -385,10 +386,10 @@ public class MantCursoAdicionar extends JInternalFrame {
 
 		try {
 			creditos = Integer.parseInt(text_Creditos.getText()); 
-			if(creditos == 0) mensajeError("Selecciona un ciclo");
+			if(creditos == 0) mensajeError("Selecciona un credito");
 			
 		}catch (Exception e) {
-			mensajeError("No ha seleccionado ningun ciclo");
+			mensajeError("No ha seleccionado ningun credito");
 		}
 
     	return creditos;
@@ -399,10 +400,10 @@ public class MantCursoAdicionar extends JInternalFrame {
     	int horas = 0;
 		try {
 			horas = Integer.parseInt(text_Horas.getText()); 
-			if(horas == 0) mensajeError("Selecciona un ciclo");
+			if(horas == 0) mensajeError("Selecciona un horas");
 			
 		}catch (Exception e) {
-			mensajeError("No ha seleccionado ningun ciclo");
+			mensajeError("No ha seleccionado ningun horas");
 		}
 
     	return horas;
@@ -427,10 +428,7 @@ public class MantCursoAdicionar extends JInternalFrame {
 		//	Metodo Procesar
 	void ProcesarAdicionar() {
 		registrarDatos();
-		
-		
 	}
-	
 	
 		// Btn Adicionar
 	protected void actionPerformedBtn_Adicionar(ActionEvent e) {

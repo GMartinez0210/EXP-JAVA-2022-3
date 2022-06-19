@@ -17,33 +17,50 @@ public class GestionCursoDAO implements CursoDAO {
 		// TODO Auto-generated method stub
 		int res = 0;
 		Connection con = null;
-		PreparedStatement pstm =null;
+		PreparedStatement pstm = null;
+		PreparedStatement pstm2 = null;
+		
+		ResultSet result = null;
+		
 		try {
-			//paso 1: Establecer la conexion a la base de datos
 			con = MySQLConexion8.getConexion();
-			//Paso 2: determine la isntruccion sql -->register
-			String sql = "insert into  curso values (null,?,?,?,?,?);";
-			//paso 3: crear el objeto pstm y enviar la variable sql
+			con.setAutoCommit(false);
+			
+			String sql = "SELECT * FROM curso WHERE asignaturaCurso = ? AND cicloCurso = ? AND creditoCurso = ? AND horasCurso = ?";
 			pstm = con.prepareStatement(sql);
-			//paso 4: parametros
-			pstm.setString(1, curso.getCodCurso());
-			pstm.setString(2, curso.getAsignatura());
-			pstm.setInt(3, curso.getCiclo());
-			pstm.setInt(4, curso.getCreditos());
-			pstm.setInt(5, curso.getHoras());
-			//paso 5 ejecutar la instruccion
-			res =pstm.executeUpdate();
+			pstm.setString(1, curso.getAsignatura());
+			pstm.setInt(2, curso.getCiclo());
+			pstm.setInt(3, curso.getCreditos());
+			pstm.setInt(4, curso.getHoras());
+			result = pstm.executeQuery();
+			
+			if(result.next()) {
+				return res;
+			}
+			
+			String sql2 = "insert into  curso values (null,?,?,?,?,?);";
+			pstm2 = con.prepareStatement(sql2);
+			pstm2.setString(1, curso.getCodCurso());
+			pstm2.setString(2, curso.getAsignatura());
+			pstm2.setInt(3, curso.getCiclo());
+			pstm2.setInt(4, curso.getCreditos());
+			pstm2.setInt(5, curso.getHoras());
+			res = pstm2.executeUpdate();
+			
+			con.commit();
 			
 		} catch (Exception e) {
 			System.out.println(">>>>>>>>>>Error en la instruccion SQL - Registrar" + e.getMessage());
 		}finally {
 			try {
-				if(pstm != null)pstm.close();
-				if(con != null)pstm.close();
+				if(pstm != null) pstm.close();
+				if(pstm2 != null) pstm2.close();
+				if(con != null) con.close();
 			} catch (SQLException e2) {
 				System.out.println(">>>>>>>>>>Error al cerrar la base de datos" + e2.getMessage());
 			}
 		}
+		System.out.println(res);
 		return res;
 	}
 
@@ -53,27 +70,45 @@ public class GestionCursoDAO implements CursoDAO {
 		
 		Connection con = null;
 		PreparedStatement pstm = null;
+		PreparedStatement pstm2 = null;
+		ResultSet result = null;
 		
 		try {
 			// Paso 1: Establecer conexion
 			con = MySQLConexion8.getConexion();
 			
-			// Paso 2: Registrar 
-			String sql = "update curso set asignaturaCurso = ?, cicloCurso = ?, creditoCurso = ?, horasCurso = ? where codCurso = ?;";
+			con.setAutoCommit(false);
 			
-			// Paso 3: Creacion del objeto pstm y enviar la variable sql
+			String sql = "SELECT * FROM curso WHERE asignaturaCurso = ? AND cicloCurso = ? AND creditoCurso = ? AND horasCurso = ?";
 			pstm = con.prepareStatement(sql);
-			
-			// Paso 4: parametros
-			
 			pstm.setString(1, curso.getAsignatura());
 			pstm.setInt(2, curso.getCiclo());
 			pstm.setInt(3, curso.getCreditos());
 			pstm.setInt(4, curso.getHoras());
-			pstm.setString(5, curso.getCodCurso());
+			result = pstm.executeQuery();
+			
+			if(result.next()) {
+				return res;
+			}
+			
+			// Paso 2: Registrar 
+			String sql2 = "update curso set asignaturaCurso = ?, cicloCurso = ?, creditoCurso = ?, horasCurso = ? where codCurso = ?;";
+			
+			// Paso 3: Creacion del objeto pstm y enviar la variable sql
+			pstm2 = con.prepareStatement(sql2);
+			
+			// Paso 4: parametros
+			
+			pstm2.setString(1, curso.getAsignatura());
+			pstm2.setInt(2, curso.getCiclo());
+			pstm2.setInt(3, curso.getCreditos());
+			pstm2.setInt(4, curso.getHoras());
+			pstm2.setString(5, curso.getCodCurso());
 			
 			// Paso 5: ejecutar la instruccion
-			res = pstm.executeUpdate();
+			res = pstm2.executeUpdate();
+			
+			con.commit();
 			
 		} catch (Exception e) {
 			System.out.println(">>> ERROR en la instruccion SQL " + e.getMessage());

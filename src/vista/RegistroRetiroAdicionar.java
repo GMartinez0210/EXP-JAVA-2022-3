@@ -35,13 +35,9 @@ import javax.swing.JRadioButton;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
+import java.awt.Color;
 
 public class RegistroRetiroAdicionar extends JInternalFrame {
-	private JTextField text_Nombre;
-	private JTextField text_Hora;
-	private JTextField text_Fecha;
-	private JTextField text_Matricula;
-	private JTextField text_Curso;
 	private JLabel lblNewLabel;
 	private JLabel lblNewLabel_1;
 	private JLabel lblNewLabel_2;
@@ -50,17 +46,28 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 	private JLabel lblNewLabel_5;
 	private JLabel lblAdicionarMatricula;
 	private JLabel lbl_Imagen;
-	private JScrollPane scrollPane;
-	private JButton btn_Procesar;
-	private JTable table;
-	private DefaultTableModel model;
-	private JTextField text_Estado;
-	private JTextField text_Alumno;
 	private JLabel lblCodAlum;
 	private JLabel lblNewLabel_7;
+	
+	public static JTextField text_Retiro;
+	public static JTextField text_Matricula;
+	public static JTextField text_Alumno;
+	public static JTextField text_Nombre;
+	public static JTextField text_Curso;
+	public static JTextField text_Estado;
+	public static JTextField text_Hora;
+	public static JTextField text_Fecha;
+	
+	private JScrollPane scrollPane;
+	private JTable table;
+
+	private JButton btn_Procesar;
+	private JButton btn_Matricula;
+
 	private JRadioButton rdbtn_Consultar;
 	private JRadioButton rdbtn_Adicionar;
-	private JTextField text_Retiro;
+
+	DefaultTableModel model = new DefaultTableModel();
 	
 		// Button Group
 	ButtonGroup grupo = new ButtonGroup();
@@ -105,6 +112,8 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 		getContentPane().setLayout(null);
 		{
 			text_Nombre = new JTextField();
+			text_Nombre.setDisabledTextColor(new Color(255, 255, 255));
+			text_Nombre.setBackground(new Color(255, 255, 255));
 			text_Nombre.setEditable(false);
 			text_Nombre.setFont(new Font("Tahoma", Font.PLAIN, 12));
 			text_Nombre.setColumns(10);
@@ -113,6 +122,8 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 		}
 		{
 			text_Hora = new JTextField();
+			text_Hora.setDisabledTextColor(new Color(255, 255, 255));
+			text_Hora.setBackground(new Color(255, 255, 255));
 			text_Hora.setEditable(false);
 			text_Hora.setFont(new Font("Tahoma", Font.PLAIN, 12));
 			text_Hora.setColumns(10);
@@ -121,6 +132,8 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 		}
 		{
 			text_Fecha = new JTextField();
+			text_Fecha.setDisabledTextColor(new Color(255, 255, 255));
+			text_Fecha.setBackground(new Color(255, 255, 255));
 			text_Fecha.setEditable(false);
 			text_Fecha.setFont(new Font("Tahoma", Font.PLAIN, 12));
 			text_Fecha.setColumns(10);
@@ -129,6 +142,9 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 		}
 		{
 			text_Matricula = new JTextField();
+			text_Matricula.setDisabledTextColor(new Color(255, 255, 255));
+			text_Matricula.setBackground(new Color(255, 255, 255));
+			text_Matricula.setEditable(false);
 			text_Matricula.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyTyped(KeyEvent e) {
@@ -137,11 +153,13 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 			});
 			text_Matricula.setFont(new Font("Tahoma", Font.PLAIN, 12));
 			text_Matricula.setColumns(10);
-			text_Matricula.setBounds(153, 149, 140, 19);
+			text_Matricula.setBounds(153, 149, 85, 19);
 			getContentPane().add(text_Matricula);
 		}
 		{
 			text_Curso = new JTextField();
+			text_Curso.setDisabledTextColor(new Color(255, 255, 255));
+			text_Curso.setBackground(new Color(255, 255, 255));
 			text_Curso.setEditable(false);
 			text_Curso.setFont(new Font("Tahoma", Font.PLAIN, 12));
 			text_Curso.setColumns(10);
@@ -209,6 +227,7 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 		}
 		{
 			btn_Procesar = new JButton("Procesar");
+			btn_Procesar.setBackground(new Color(255, 255, 255));
 			btn_Procesar.setFont(new Font("Tahoma", Font.PLAIN, 12));
 			btn_Procesar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -220,6 +239,8 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 		}
 		{
 			text_Retiro = new JTextField();
+			text_Retiro.setDisabledTextColor(new Color(255, 255, 255));
+			text_Retiro.setBackground(new Color(255, 255, 255));
 			text_Retiro.setEditable(false);
 			text_Retiro.setFont(new Font("Tahoma", Font.PLAIN, 12));
 			text_Retiro.setColumns(10);
@@ -229,6 +250,8 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 		}
 		{
 			text_Estado = new JTextField();
+			text_Estado.setDisabledTextColor(new Color(255, 255, 255));
+			text_Estado.setBackground(new Color(255, 255, 255));
 			text_Estado.setEditable(false);
 			text_Estado.setBounds(432, 225, 140, 19);
 			getContentPane().add(text_Estado);
@@ -236,6 +259,8 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 		}
 		{
 			text_Alumno = new JTextField();
+			text_Alumno.setDisabledTextColor(new Color(255, 255, 255));
+			text_Alumno.setBackground(new Color(255, 255, 255));
 			text_Alumno.setEditable(false);
 			text_Alumno.setColumns(10);
 			text_Alumno.setBounds(153, 189, 140, 19);
@@ -290,6 +315,18 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 		model.addColumn("Fecha");
 		model.addColumn("Hora");
 		table.setModel(model);
+		{
+			btn_Matricula = new JButton("...");
+			btn_Matricula.setBackground(new Color(255, 255, 255));
+			btn_Matricula.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					actionPerformedBtn_Matricula(e);
+				}
+			});
+			btn_Matricula.setFont(new Font("Tahoma", Font.PLAIN, 12));
+			btn_Matricula.setBounds(248, 147, 45, 23);
+			getContentPane().add(btn_Matricula);
+		}
 		MostramosTabla();
 	}
 	
@@ -507,5 +544,11 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 	protected void keyTypedText_Matricula(KeyEvent e) {
 		NoEspeciales(e);
 		BorrandoDigitos(e, 1);
+	}
+	
+	// Button Matricula
+	protected void actionPerformedBtn_Matricula(ActionEvent e) {
+		DlgMatricula matricula = new DlgMatricula();
+		matricula.setVisible(true);
 	}
 }

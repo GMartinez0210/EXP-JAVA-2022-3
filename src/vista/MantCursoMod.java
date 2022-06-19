@@ -258,25 +258,14 @@ public class MantCursoMod extends JInternalFrame {
         modelo.setRowCount(0);
         if(codCurso == null) {
             return;
-        }else {
-            	Curso curso = gCurso.listarCurso(codCurso);
-            	text_Codigo.setText(curso.getCodCurso());
-            	text_Horas.setText(""+ curso.getHoras());
-            	CBO_Ciclo.setSelectedIndex(curso.getCiclo());
-            	text_Asignatura.setText(curso.getAsignatura());
-            	text_Creditos.setText(""+ curso.getCreditos());
-            	
-//            	modelo.setRowCount(0);
-//            	Object[] row = {
-//    					curso.getCodCurso(),
-//    					curso.getAsignatura(),
-//    					curso.getCiclo(),
-//    					curso.getCreditos(),
-//    					curso.getHoras(),
-//    			};
-//    			modelo.addRow(row);  	
         }
-		
+        
+        Curso curso = gCurso.listarCurso(codCurso);
+        text_Codigo.setText(curso.getCodCurso());
+        text_Horas.setText(""+ curso.getHoras());
+        CBO_Ciclo.setSelectedIndex(curso.getCiclo());
+        text_Asignatura.setText(curso.getAsignatura());
+        text_Creditos.setText(""+ curso.getCreditos()); 	
 	}
 	void actualizarDatos() {
 		String codCurso, asignatura;
@@ -308,7 +297,7 @@ public class MantCursoMod extends JInternalFrame {
         		mensajeError("Error en la actualización");
         	}
         	else {
-        		mensajeExitoso("Usuario Actualizado");
+        		mensajeExitoso("Curso actualizado");
         	}
         }
 	}

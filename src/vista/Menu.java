@@ -26,8 +26,6 @@ public class Menu extends JFrame  {
 	private JMenuBar menuBar;
 	private JMenu mnMantenimiento;
 	private JMenu mnRegistro;
-	private JMenu mnConsulta;
-	private JMenu mnReporte;
 	private JMenu mnAlumno;
 	private JMenu mnCurso;
 	private JMenuItem mntmAdicionar;
@@ -40,9 +38,6 @@ public class Menu extends JFrame  {
 	private JMenuItem mntmConsultarModificarEliminar_2;
 	private JMenuItem mntmAdicionar_3;
 	private JMenuItem mntmConsultarModificarEliminar_3;
-	private JMenuItem mntmAlumnosYCursos;
-	private JMenuItem mntmMatrculasYRetiros;
-	private JMenuItem mntmAlumnosMatriculados;
 	private JMenu mnNewMenu;
 	private JMenuItem mntmNewMenuItem;
 
@@ -175,36 +170,6 @@ public class Menu extends JFrame  {
 			}
 		});
 		mnRetiro.add(mntmConsultarModificarEliminar_3);
-		
-		mnConsulta = new JMenu("Consulta");
-		menuBar.add(mnConsulta);
-		
-		mntmAlumnosYCursos = new JMenuItem("Alumnos y cursos");
-		mntmAlumnosYCursos.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				actionPerformedMntmAlumnosYCursos(e);
-			}
-		});
-		mnConsulta.add(mntmAlumnosYCursos);
-		
-		mntmMatrculasYRetiros = new JMenuItem("Matr\u00EDculas y retiros");
-		mntmMatrculasYRetiros.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				actionPerformedMntmMatrculasYRetiros(e);
-			}
-		});
-		mnConsulta.add(mntmMatrculasYRetiros);
-		
-		mnReporte = new JMenu("Reporte");
-		menuBar.add(mnReporte);
-		
-		mntmAlumnosMatriculados = new JMenuItem("Alumnos matriculados");
-		mntmAlumnosMatriculados.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				actionPerformedMntmAlumnosMatriculados(e);
-			}
-		});
-		mnReporte.add(mntmAlumnosMatriculados);
 		desk = new JPanel();
 		desk.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(desk);
@@ -253,32 +218,11 @@ public class Menu extends JFrame  {
 		rra.show();
 	}
 	
-	//	Consulta Alumnos y Cursos
-	protected void actionPerformedMntmAlumnosYCursos(ActionEvent e) {
-		ConsultasAlumnosYCursos cac = new ConsultasAlumnosYCursos();
-		desk.add(cac);
-		cac.show();
-	}
-	
-	//	Reportes Alumnos Matriculados
-	protected void actionPerformedMntmAlumnosMatriculados(ActionEvent e) {
-		ReporteAlumnosMatriculados ram = new ReporteAlumnosMatriculados();
-		desk.add(ram);
-		ram.show();
-	}
-	
 	//	Registro Matricula Consultar Modificar Eliminar
 	protected void actionPerformedMntmConsultarModificarEliminar_2(ActionEvent e) {
 		RegistroMatricularMod rmcme = new RegistroMatricularMod();
 		desk.add(rmcme);
 		rmcme.show();
-	}
-	
-	//	Consulta Matricula y Retiros
-	protected void actionPerformedMntmMatrculasYRetiros(ActionEvent e) {
-		ConsultasMatriculasYRetiros cmr = new ConsultasMatriculasYRetiros();
-		desk.add(cmr);
-		cmr.show();
 	}
 	// Registro Retiro Modificar
 	protected void actionPerformedMntmConsultarModificarEliminar_3(ActionEvent e) {

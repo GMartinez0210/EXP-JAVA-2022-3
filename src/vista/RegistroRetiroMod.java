@@ -13,11 +13,11 @@ import arrays.ArrayAlumno;
 import arrays.ArrayCurso;
 import arrays.ArrayMatricula;
 import arrays.ArrayRetiro;
-
+import entidad.Alumno;
 import entidad.Curso;
 import entidad.Matricula;
 import entidad.Retiro;
-
+import mantenimiento.GestionAlumnoDAO;
 import mantenimiento.GestionRetiroDAO;
 
 import javax.swing.JScrollPane;
@@ -31,29 +31,34 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
+import java.awt.Color;
 
 public class RegistroRetiroMod extends JInternalFrame {
 	private JTable table;
 	private JScrollPane scrollPane;
-	private JRadioButton rdbtn_Consultar;
-	private JRadioButton rdbtn_Modificar;
-	private DefaultTableModel modelo;
-	private JButton btn_Limpiar;
-	private JTextField text_Retiro;
+	
 	private JLabel lblNewLabel;
-	private JTextField text_Alumno;
 	private JLabel lblNewLabel_1;
-	private JTextField text_Matricula;
 	private JLabel lblNewLabel_2;
-	private JTextField text_Fecha;
-	private JTextField text_Hora;
 	private JLabel lblNewLabel_3;
 	private JLabel lblNewLabel_4;
+	private JLabel lblNewLabel_5;
+	
+	public static JTextField text_Retiro;
+	public static JTextField text_Alumno;
+	public static JTextField text_Matricula;
+	public static JTextField text_Fecha;
+	public static JTextField text_Hora;
+	public static JTextField text_Curso;
+
+	private JButton btn_Limpiar;
 	private JButton btn_Consultar;
 	private JButton btn_Eliminar;
-	private JTextField text_Curso;
-	private JLabel lblNewLabel_5;
-
+	private JButton btn_Consultar_1;
+	
+	private JRadioButton rdbtn_Consultar;
+	private JRadioButton rdbtn_Modificar;
+	
 		// Button Groups
 	ButtonGroup group = new ButtonGroup();
 	
@@ -64,6 +69,7 @@ public class RegistroRetiroMod extends JInternalFrame {
 	ArrayRetiro AR = new ArrayRetiro(); 
 	
 		// GestionDAO
+	GestionAlumnoDAO gAlumno = new GestionAlumnoDAO();
 	GestionRetiroDAO gRetiro = new GestionRetiroDAO();
 	
 	DefaultTableModel model = new DefaultTableModel();
@@ -120,6 +126,7 @@ public class RegistroRetiroMod extends JInternalFrame {
 		getContentPane().add(rdbtn_Modificar);
 
 		btn_Limpiar = new JButton("");
+		btn_Limpiar.setBackground(new Color(255, 255, 255));
 		btn_Limpiar.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		btn_Limpiar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -131,6 +138,9 @@ public class RegistroRetiroMod extends JInternalFrame {
 		getContentPane().add(btn_Limpiar);
 		
 		text_Retiro = new JTextField();
+		text_Retiro.setDisabledTextColor(new Color(255, 255, 255));
+		text_Retiro.setBackground(new Color(255, 255, 255));
+		text_Retiro.setEditable(false);
 		text_Retiro.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -138,7 +148,7 @@ public class RegistroRetiroMod extends JInternalFrame {
 			}
 		});
 		text_Retiro.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		text_Retiro.setBounds(109, 110, 96, 19);
+		text_Retiro.setBounds(109, 110, 75, 19);
 		getContentPane().add(text_Retiro);
 		text_Retiro.setColumns(10);
 		
@@ -148,9 +158,11 @@ public class RegistroRetiroMod extends JInternalFrame {
 		getContentPane().add(lblNewLabel);
 		
 		text_Alumno = new JTextField();
+		text_Alumno.setDisabledTextColor(new Color(255, 255, 255));
+		text_Alumno.setBackground(new Color(255, 255, 255));
 		text_Alumno.setEditable(false);
 		text_Alumno.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		text_Alumno.setBounds(109, 187, 96, 19);
+		text_Alumno.setBounds(109, 187, 110, 19);
 		getContentPane().add(text_Alumno);
 		text_Alumno.setColumns(10);
 		
@@ -160,9 +172,11 @@ public class RegistroRetiroMod extends JInternalFrame {
 		getContentPane().add(lblNewLabel_1);
 		
 		text_Matricula = new JTextField();
+		text_Matricula.setDisabledTextColor(new Color(255, 255, 255));
+		text_Matricula.setBackground(new Color(255, 255, 255));
 		text_Matricula.setEditable(false);
 		text_Matricula.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		text_Matricula.setBounds(109, 148, 96, 19);
+		text_Matricula.setBounds(109, 148, 110, 19);
 		getContentPane().add(text_Matricula);
 		text_Matricula.setColumns(10);
 		
@@ -172,6 +186,8 @@ public class RegistroRetiroMod extends JInternalFrame {
 		getContentPane().add(lblNewLabel_2);
 		
 		text_Fecha = new JTextField();
+		text_Fecha.setDisabledTextColor(new Color(255, 255, 255));
+		text_Fecha.setBackground(new Color(255, 255, 255));
 		text_Fecha.setEditable(false);
 		text_Fecha.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		text_Fecha.setBounds(334, 110, 96, 19);
@@ -179,6 +195,8 @@ public class RegistroRetiroMod extends JInternalFrame {
 		text_Fecha.setColumns(10);
 		
 		text_Hora = new JTextField();
+		text_Hora.setDisabledTextColor(new Color(255, 255, 255));
+		text_Hora.setBackground(new Color(255, 255, 255));
 		text_Hora.setEditable(false);
 		text_Hora.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		text_Hora.setBounds(334, 148, 96, 19);
@@ -196,6 +214,7 @@ public class RegistroRetiroMod extends JInternalFrame {
 		getContentPane().add(lblNewLabel_4);
 		
 		btn_Consultar = new JButton("Consultar");
+		btn_Consultar.setBackground(new Color(255, 255, 255));
 		btn_Consultar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				actionPerformedBtn_Consultar(e);
@@ -206,6 +225,7 @@ public class RegistroRetiroMod extends JInternalFrame {
 		getContentPane().add(btn_Consultar);
 		
 		btn_Eliminar = new JButton("Eliminar");
+		btn_Eliminar.setBackground(new Color(255, 255, 255));
 		btn_Eliminar.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		btn_Eliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -216,6 +236,8 @@ public class RegistroRetiroMod extends JInternalFrame {
 		getContentPane().add(btn_Eliminar);
 		
 		text_Curso = new JTextField();
+		text_Curso.setDisabledTextColor(new Color(255, 255, 255));
+		text_Curso.setBackground(new Color(255, 255, 255));
 		text_Curso.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -243,17 +265,28 @@ public class RegistroRetiroMod extends JInternalFrame {
 		table.setFillsViewportHeight(true);
 		
 		scrollPane.setViewportView(table);
-
-		model.addColumn("N° Retiro");
-		model.addColumn("N° Matricula");
-		model.addColumn("Cod. Alumno");
-		model.addColumn("Cod. Curso");
-		model.addColumn("Fecha");
-		model.addColumn("Hora");
+		
+		btn_Consultar_1 = new JButton("...");
+		btn_Consultar_1.setBackground(new Color(255, 255, 255));
+		btn_Consultar_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				actionPerformedBtn_Consultar_1(e);
+			}
+		});
+		btn_Consultar_1.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		btn_Consultar_1.setBounds(188, 109, 31, 21);
+		getContentPane().add(btn_Consultar_1);
+		
+		// Mostramos el Default de la Tabla
+		model.addColumn("Codigo");
+		model.addColumn("Nombre");
+		model.addColumn("Apellido");
+		model.addColumn("DNI");
+		model.addColumn("Edad");
+		model.addColumn("Celular");
+		model.addColumn("Estado");
 		
 		table.setModel(model);
-		
-		MostramosTabla();
 	}
 	
 	void NoEspeciales (KeyEvent e) {
@@ -330,20 +363,25 @@ public class RegistroRetiroMod extends JInternalFrame {
 	//	Método Mostrar Tabla
 	void MostramosTabla() {
 		model.setRowCount(0);
+		Alumno alumno = gAlumno.listarAlumno(text_Alumno.getText());
 		
-		ArrayList<Retiro> retiros = gRetiro.leer();
-		for (Retiro retiro : retiros) {
-			Object [] row = {
-					retiro.getNumRetiro(),
-					retiro.getNumMatricula(),
-					retiro.getCodAlumno(),
-					retiro.getCodCurso(),
-					retiro.getFecha(),
-					retiro.getHora()
-			};
-			model.addRow(row);
+		if (alumno == null) {
+			JOptionPane.showMessageDialog(this, "No hay alumno", "ALERTA", 2);
+			return;
 		}
+		
+		Object row[] = {
+				alumno.getCodAlumno(), 
+				alumno.getNombres(), 
+				alumno.getApellidos(), 
+				alumno.getDni(), 
+				alumno.getEdad(), 
+				alumno.getCelular(), 
+				alumno.getEstado()
+			};
+		model.addRow(row);
 	}
+	
 	//Metodo Obtener Retiro
 	Retiro getRetiro() {
 		for(int i = 0; i < AR.tamanio(); i++) {
@@ -414,23 +452,8 @@ public class RegistroRetiroMod extends JInternalFrame {
 	//Boton Consultar
 	protected void actionPerformedBtn_Consultar(ActionEvent e) {
 		if (rdbtn_Consultar.isSelected()) {
-			String codRetiro = LeerString(text_Retiro);
-			if(codRetiro.length() != 0) {
-				Retiro retiro = gRetiro.leer(codRetiro);
-				if(retiro != null) {
-					text_Matricula.setText(retiro.getNumMatricula());
-					text_Curso.setText(retiro.getCodCurso());
-					text_Alumno.setText(retiro.getCodAlumno());
-					text_Fecha.setText(retiro.getFecha());
-					text_Hora.setText(retiro.getHora());
-				}
-				else {
-					NoExiste("N° MATRICULA", text_Matricula);
-				}
-			}
-			else {
-				Error("MATRICULA", text_Retiro);
-			}
+			MostramosTabla();
+			
 		}
 		else if(rdbtn_Modificar.isSelected()) {
 			String numRetiro = LeerString(text_Retiro);
@@ -449,4 +472,10 @@ public class RegistroRetiroMod extends JInternalFrame {
 	
 		MostramosTabla();
 	}	
+	
+	// Buscat
+	protected void actionPerformedBtn_Consultar_1(ActionEvent e) {
+		DlgRetiro retiro = new DlgRetiro();
+		retiro.setVisible(true);
+	}
 }

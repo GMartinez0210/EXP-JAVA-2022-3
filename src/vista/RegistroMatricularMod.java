@@ -32,30 +32,34 @@ import java.awt.event.MouseEvent;
 public class RegistroMatricularMod extends JInternalFrame {
 	private JTable table;
 	private JScrollPane scrollPane;
+	
 	private JLabel lblAccion;
+	private JLabel lblNewLabel;
+	private JLabel lblNewLabel_1;
+	private JLabel lblNewLabel_2;
+	private JLabel lblNewLabel_3;
+	private JLabel lblNewLabel_4;
+	
+	public static JTextField text_Codigo;
+	public static JTextField text_CodAlumno;
+	public static JTextField text_CodCurso;
+	public static JTextField text_Hora;
+	public static JTextField text_Fecha;
+	
+	private JButton btnLimpiar;
+	private JButton btnModificar;
+	private JButton btnEliminar;
+
 	private JRadioButton rdbtn_Modificar;
 	private JRadioButton rdbtn_Consultar;
-	private DefaultTableModel modelo;
+
 	ButtonGroup btnsGrupo = new ButtonGroup();
-	private JLabel lblNewLabel;
-	private JTextField text_Codigo;
-	private JLabel lblNewLabel_1;
-	private JTextField text_CodAlumno;
-	private JLabel lblNewLabel_2;
-	private JTextField text_CodCurso;
-	private JLabel lblNewLabel_3;
-	private JTextField text_Hora;
-	private JTextField text_Fecha;
-	private JLabel lblNewLabel_4;
-	private JButton btnLimpiar;
-	private JButton btnEliminar;
 	
 	DefaultTableModel model = new DefaultTableModel();
 
 	GestionMatriculaDAO gMatricula = new GestionMatriculaDAO();
 	GestionAlumnoDAO gAlumno = new GestionAlumnoDAO();
 	GestionCursoDAO gCurso = new GestionCursoDAO();
-	private JButton btnModificar;
 
 	/**
 	 * Launch the application.
@@ -338,7 +342,7 @@ public class RegistroMatricularMod extends JInternalFrame {
 			int confirmacion = JOptionPane.showConfirmDialog(null, "¿Eliminar Matricula?", "Sistema", JOptionPane.YES_NO_OPTION);
 			
 			if (confirmacion == 0) {	    	
-				gAlumno.actualizarEstadoAlumno(0, text_CodAlumno.getText());
+				gAlumno.actualizarEstadoAlumno(2, text_CodAlumno.getText());
 				Limpiar();
 				mensajeExitoso("Usuario eliminado");
 				MostramosTabla();
