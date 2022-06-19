@@ -22,4 +22,7 @@ public interface AlumnoDAO {
 	public int obtenerEstado(String codAlumno);
 	
 	public void actualizarEstadoAlumno(int estado, String codA);
+	
+	public ArrayList<Alumno> listarAlumnoXEstado(int estado);
+	public ArrayList<Alumno> listarAlumnoXNombre(String nombre);
 }

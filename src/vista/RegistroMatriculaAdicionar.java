@@ -32,8 +32,8 @@ import javax.swing.ImageIcon;
 
 public class RegistroMatriculaAdicionar extends JInternalFrame {
 	private JTextField text_Matricula;
-	private JTextField text_Alumno;
-	private JTextField text_Curso;
+	public static JTextField text_Alumno;
+	public static JTextField text_Curso;
 	private JLabel lblNewLabel;
 	private JLabel lblNewLabel_1;
 	private JLabel lblNewLabel_2;
@@ -47,6 +47,8 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 	GestionMatriculaDAO gMatricula = new GestionMatriculaDAO();
 	GestionAlumnoDAO gAlumno = new GestionAlumnoDAO();
 	GestionCursoDAO gCurso = new GestionCursoDAO();
+	private JButton btnDlgAlumno;
+	private JButton btnDlgCurso;
 	
 	/**
 	 * Launch the application.
@@ -86,16 +88,18 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 		}
 		{
 			text_Alumno = new JTextField();
+			text_Alumno.setEditable(false);
 			text_Alumno.setFont(new Font("Tahoma", Font.PLAIN, 12));
 			text_Alumno.setColumns(10);
-			text_Alumno.setBounds(153, 164, 140, 19);
+			text_Alumno.setBounds(153, 164, 117, 19);
 			getContentPane().add(text_Alumno);
 		}
 		{
 			text_Curso = new JTextField();
+			text_Curso.setEditable(false);
 			text_Curso.setFont(new Font("Tahoma", Font.PLAIN, 12));
 			text_Curso.setColumns(10);
-			text_Curso.setBounds(432, 132, 140, 19);
+			text_Curso.setBounds(432, 132, 117, 19);
 			getContentPane().add(text_Curso);
 		}
 		{
@@ -157,6 +161,26 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 		modelo.addColumn("Fecha");
 		modelo.addColumn("Hora");
 		table.setModel(modelo);
+		
+		btnDlgAlumno = new JButton("");
+		btnDlgAlumno.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				actionPerformedBtnDlgAlumno(e);
+			}
+		});
+		btnDlgAlumno.setIcon(new ImageIcon(RegistroMatriculaAdicionar.class.getResource("/imagenes/user (1).png")));
+		btnDlgAlumno.setBounds(269, 160, 24, 26);
+		getContentPane().add(btnDlgAlumno);
+		
+		btnDlgCurso = new JButton("");
+		btnDlgCurso.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				actionPerformedBtnDlgCurso(e);
+			}
+		});
+		btnDlgCurso.setIcon(new ImageIcon(RegistroMatriculaAdicionar.class.getResource("/imagenes/open-book (1).png")));
+		btnDlgCurso.setBounds(548, 130, 24, 23);
+		getContentPane().add(btnDlgCurso);
 		mostramosTabla();
 	}
 	
@@ -217,17 +241,36 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 		adicionarMatricula();
 	}
 
+	// Mostrar lista de alumnos registrados
+	protected void actionPerformedBtnDlgCurso(ActionEvent e) {
+		mostrarDlgCurso();
+	}
+	// Mostrar lista de cursos
+	protected void actionPerformedBtnDlgAlumno(ActionEvent e) {
+		mostrarDlgAlumno();
+	}
+	
+	private void mostrarDlgAlumno() {
+		DlgListarAlumnosRegistrados aRegistrados = new DlgListarAlumnosRegistrados();
+		aRegistrados.setVisible(true);
+		aRegistrados.setLocationRelativeTo(this);
+	}
+
+	private void mostrarDlgCurso() {
+		DlgListarCursos aRegistrados = new DlgListarCursos();
+		aRegistrados.setVisible(true);
+		aRegistrados.setLocationRelativeTo(this);
+	}
+	
 	private void adicionarMatricula() {
-		// TODO Auto-generated method stub
-		//int idM;
 		String numM, codA, codC, fecha, hora;
-		// Obtener los datos de GUI
+		
 		numM = text_Matricula.getText();
 		codA = obtenerCodigoAlumno();
 		codC = obtenerCodigoCurso();
 		hora = Hora();
 		fecha = Fecha();
-		// validar
+		
 		if (codA == null || codC == null) {
 			System.out.println("No se matriculo");
 			return;
@@ -241,9 +284,8 @@ public class RegistroMatriculaAdicionar extends JInternalFrame {
 			m.setFecha(fecha);
 			m.setHora(hora);
 
-			// llamar al proceso actualizar
 			int ok = gMatricula.registrar(m);
-			// validar el resultado del proceso actualizar
+			
 			if (ok == 0) {
 				mensajeError("Error en la actualización ");
 			} else {
