@@ -40,6 +40,8 @@ public class Menu extends JFrame  {
 	private JMenuItem mntmConsultarModificarEliminar_3;
 	private JMenu mnNewMenu;
 	private JMenuItem mntmNewMenuItem;
+	private JMenu mnReporte;
+	private JMenuItem mntmReporte;
 
 	/**
 	 * Launch the application.
@@ -170,6 +172,17 @@ public class Menu extends JFrame  {
 			}
 		});
 		mnRetiro.add(mntmConsultarModificarEliminar_3);
+		
+		mnReporte = new JMenu("Reporte");
+		menuBar.add(mnReporte);
+		
+		mntmReporte = new JMenuItem("Reporte Alumno");
+		mntmReporte.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mntmReporteActionPerformed(e);
+			}
+		});
+		mnReporte.add(mntmReporte);
 		desk = new JPanel();
 		desk.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(desk);
@@ -233,5 +246,11 @@ public class Menu extends JFrame  {
 	// Salir
 	protected void actionPerformedMntmNewMenuItem(ActionEvent e) {
 		System.exit(0);
+	}
+	// Reporte
+	protected void mntmReporteActionPerformed(ActionEvent e) {
+		Reporte reporte = new Reporte();
+		desk.add(reporte);
+		reporte.show();
 	}
 }
