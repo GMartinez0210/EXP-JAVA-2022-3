@@ -14,7 +14,6 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
-import arrays.ArrayAlumno;
 import entidad.Alumno;
 import mantenimiento.GestionAlumnoDAO;
 

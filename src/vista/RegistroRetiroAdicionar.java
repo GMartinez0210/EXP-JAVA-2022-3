@@ -11,10 +11,6 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
-import arrays.ArrayAlumno;
-import arrays.ArrayCurso;
-import arrays.ArrayMatricula;
-import arrays.ArrayRetiro;
 import entidad.Alumno;
 import entidad.Curso;
 import entidad.Matricula;
@@ -75,13 +71,6 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 		// GestionDAO
 	GestionMatriculaDAO gMatricula = new GestionMatriculaDAO();
 	GestionRetiroDAO gRetiro = new GestionRetiroDAO();
-	
-		//	Arrays Globoterraqueos
-	ArrayMatricula AM = new ArrayMatricula();
-	ArrayAlumno AA = new ArrayAlumno();
-	ArrayCurso AC = new ArrayCurso();
-	ArrayRetiro AR = new ArrayRetiro();
-
 	
 	/**
 	 * Launch the application.
@@ -246,7 +235,6 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 			text_Retiro.setColumns(10);
 			text_Retiro.setBounds(153, 113, 140, 19);
 			getContentPane().add(text_Retiro);
-			text_Retiro.setText(AR.codigoCorrelativo());
 		}
 		{
 			text_Estado = new JTextField();
@@ -418,36 +406,6 @@ public class RegistroRetiroAdicionar extends JInternalFrame {
 		text_Fecha.setText(Fecha());
 		text_Hora.setText(Hora());
 		text_Estado.setText("");
-	}
-	
-		//	Metodo Adicionamos Retiro
-	void AdicionamosRetiro(String Matricula) {
-		AA.buscarCod(AM.buscar(Matricula).getCodAlumno()).setEstado(2);
-		AA.actulizarArchivos();
-		Retiro nuevo = new Retiro(AR.codigoCorrelativo(), Matricula, Fecha(), Hora());
-		AR.adicionar(nuevo);
-		MostramosTabla();
-		Limpiar();
-	}
-	
-		//	Metodo Retiro
-	void Retiro(String Matricula) {
-		if (Matricula.length() != 0) {
-			if (AM.buscar(Matricula) != null) {
-				if (AA.buscarCod(AM.buscar(Matricula).getCodAlumno()).getEstado() != 2) {
-					AdicionamosRetiro(Matricula);
-				}
-				else {
-					NoPuede();
-				}
-			}
-			else {
-				NoExiste("MATRICULA", text_Matricula);
-			}
-		}
-		else {
-			Error("MATRICULA", text_Matricula);
-		}
 	}
 	
 		//	Btn Procesar

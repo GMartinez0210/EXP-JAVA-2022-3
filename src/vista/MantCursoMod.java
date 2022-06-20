@@ -17,9 +17,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
 
-import arrays.ArrayAlumno;
-import arrays.ArrayCurso;
-import arrays.ArrayMatricula;
 import entidad.Curso;
 import mantenimiento.GestionCursoDAO;
 
@@ -54,10 +51,6 @@ public class MantCursoMod extends JInternalFrame {
 	private JTable table;
 
 	GestionCursoDAO gCurso = new GestionCursoDAO();	
-		//	Array Globoterráqueo
-	ArrayCurso AC = new ArrayCurso();
-	ArrayAlumno AA = new ArrayAlumno();
-	ArrayMatricula AM = new ArrayMatricula();
 	
 	/**
 	 * Launch the application.
@@ -343,7 +336,7 @@ public class MantCursoMod extends JInternalFrame {
 	    	}
 	    	else {
 	    		try {
-	    			cod = text_Codigo.getText();
+	    			cod = text_Codigo.getText().trim();
 	    		}
 	    		catch (Exception e) {
 	    			mensajeError("Ingrese un código numérico");
@@ -356,7 +349,7 @@ public class MantCursoMod extends JInternalFrame {
 	private String getAsignatura() {
 		String asignatura = null;
 		try {
-			asignatura = text_Asignatura.getText(); 
+			asignatura = text_Asignatura.getText().trim(); 
 			if(asignatura == null) mensajeError("Selecciona un ciclo");
 			
 		}catch (Exception e) {
@@ -382,7 +375,7 @@ public class MantCursoMod extends JInternalFrame {
     	int creditos = 0;
 
 		try {
-			creditos = Integer.parseInt(text_Creditos.getText()); 
+			creditos = Integer.parseInt(text_Creditos.getText().trim()); 
 			if(creditos == 0) mensajeError("Selecciona un ciclo");
 			
 		}catch (Exception e) {
@@ -396,7 +389,7 @@ public class MantCursoMod extends JInternalFrame {
 	int getHoras() {
     	int horas = 0;
 		try {
-			horas = Integer.parseInt(text_Horas.getText()); 
+			horas = Integer.parseInt(text_Horas.getText().trim()); 
 			if(horas == 0) mensajeError("Selecciona un ciclo");
 			
 		}catch (Exception e) {
@@ -451,15 +444,15 @@ public class MantCursoMod extends JInternalFrame {
 	void BorrandoDigitos (KeyEvent e,int field) {
 		switch (field) {
 			case 1: 
-				if(text_Codigo.getText().length() >= 6)
+				if(text_Codigo.getText().trim().length() >= 6)
 			        e.consume();
 						break;
 			case 3: 
-				if(text_Creditos.getText().length() >= 2)
+				if(text_Creditos.getText().trim().length() >= 2)
 			        e.consume();
 						break;
 			case 4: 
-				if(text_Horas.getText().length() >= 1)
+				if(text_Horas.getText().trim().length() >= 1)
 			        e.consume();
 						break;
 		}
@@ -539,15 +532,6 @@ public class MantCursoMod extends JInternalFrame {
 		TextEditable(text_Horas);
 	}
 	
-		//	Limpiar
-	void Limpiar() {
-		text_Codigo.setText("" + AC.codigoCorrelativo());
-		text_Asignatura.setText("");
-		CBO_Ciclo.setSelectedIndex(0);
-		text_Creditos.setText("");
-		text_Horas.setText("");
-	}
-
 	private void mensajeExitoso(String msj) {
 		 JOptionPane.showMessageDialog(this, msj, "Registro bien", 1);
 		

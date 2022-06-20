@@ -4,9 +4,6 @@ import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.EventQueue;
 
-import arrays.ArrayAlumno;
-import arrays.ArrayCurso;
-import arrays.ArrayMatricula;
 import entidad.Alumno;
 import entidad.Curso;
 import entidad.Matricula;

@@ -9,10 +9,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import arrays.ArrayAlumno;
-import arrays.ArrayCurso;
-import arrays.ArrayMatricula;
-import arrays.ArrayRetiro;
 import entidad.Alumno;
 import entidad.Curso;
 import entidad.Matricula;
@@ -61,12 +57,6 @@ public class RegistroRetiroMod extends JInternalFrame {
 	
 		// Button Groups
 	ButtonGroup group = new ButtonGroup();
-	
-		// ArrayList
-	ArrayMatricula AM = new ArrayMatricula();
-	ArrayAlumno AA = new ArrayAlumno();
-	ArrayCurso AC = new ArrayCurso();
-	ArrayRetiro AR = new ArrayRetiro(); 
 	
 		// GestionDAO
 	GestionAlumnoDAO gAlumno = new GestionAlumnoDAO();
@@ -382,17 +372,6 @@ public class RegistroRetiroMod extends JInternalFrame {
 		model.addRow(row);
 	}
 	
-	//Metodo Obtener Retiro
-	Retiro getRetiro() {
-		for(int i = 0; i < AR.tamanio(); i++) {
-			if(AR.obtener(i).getNumRetiro().equals(LeerString(text_Retiro))) {
-				return AR.obtener(i);
-			}
-		}
-		return null;
-	}
-	
-	
 
 	//Radious button Modificar
 	protected void actionPerformedRdbtn_Modificar(ActionEvent e) {
@@ -439,14 +418,6 @@ public class RegistroRetiroMod extends JInternalFrame {
 		else {
 			Error("N° Retiro", text_Retiro);
 		}
-	}
-	Curso ObtenerCurso() {
-		for (int i = 0; i < AC.tamanio(); i++) {
-			if(AC.obtener(i).getCodCurso().equals(LeerString(text_Curso))) {
-				return AC.obtener(i);
-			}
-		}
-		return null;
 	}
 	
 	//Boton Consultar

@@ -16,7 +16,6 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import arrays.ArrayAlumno;
 import entidad.Alumno;
 import mantenimiento.GestionAlumnoDAO;
 

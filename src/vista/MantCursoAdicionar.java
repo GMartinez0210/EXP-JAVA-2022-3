@@ -2,7 +2,6 @@ package vista;
 
 import java.awt.EventQueue;
 
-import arrays.ArrayCurso;
 import entidad.Curso;
 import mantenimiento.GestionCursoDAO;
 import javax.swing.JInternalFrame;
@@ -48,8 +47,6 @@ public class MantCursoAdicionar extends JInternalFrame {
 	
 	GestionCursoDAO gCurso = new GestionCursoDAO();	
 		//	Array Gobloterráqueo
-	ArrayCurso AC = new ArrayCurso();
-	
 	
 	/**
 	 * Launch the application.
@@ -285,39 +282,7 @@ public class MantCursoAdicionar extends JInternalFrame {
 		JOptionPane.showMessageDialog(this, "No relleno CORRECTAMENTE el campo: " + x, "ALERTA", 1);
 		text.requestFocus();
 	}
-	
-		//	Metodo Limpiar
-	void Limpiar() {
-		text_Codigo.setText("" + AC.codigoCorrelativo());
-		text_Asignatura.setText("");
-		CBO_Ciclo.setSelectedIndex(0);
-		text_Creditos.setText("");
-		text_Horas.setText("");
-	}
-	
-	
-		//	Mostrar Tabla
-	void MostramosTabla() {
-		modelo.setRowCount(0);
-		for (int i = 0; i < AC.tamanio(); i++) {
-			Object [] fila = {
-					AC.obtener(i).getCodCurso(),
-					AC.obtener(i).getAsignatura(),
-					AC.obtener(i).getCiclo(),
-					AC.obtener(i).getCreditos(),
-					AC.obtener(i).getHoras()
-			};
-			modelo.addRow(fila);
-		}
-	}
-	
-		//	Metodo Adicionamos Curso
-	void AdicionamosCurso(String Asignatura, int Ciclo, int Creditos, int Horas) {
-		Curso nuevo = new Curso(AC.codigoCorrelativo(), Asignatura, Ciclo, Creditos, Horas);
-		AC.adicionar(nuevo);
-		MostramosTabla();
-		Limpiar();
-	}
+
 	
 	void registrarDatos(){
 		// variables
@@ -352,8 +317,6 @@ public class MantCursoAdicionar extends JInternalFrame {
 				mensajeExitoso("Registro exitoso");
 			}
 		}
-		
-		MostramosTabla();
 	}
 
 	private String getAsignatura() {
